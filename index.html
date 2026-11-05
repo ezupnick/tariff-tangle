@@ -311,6 +311,9 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
 .chainrow .cu{display:flex;flex-direction:column;align-items:center;gap:3px}
 .chainrow .cu small{font-size:.64rem;font-weight:800;color:var(--muted);text-align:center;max-width:58px;line-height:1.1}
 .chains .arrow{color:var(--muted);font-size:1.05rem;align-self:flex-start;margin-top:14px}
+.tut .note{margin-top:6px;background:rgba(200,144,42,.12);border:1px solid rgba(200,144,42,.38);
+  border-radius:10px;padding:10px 12px;font-size:.84rem;line-height:1.5;color:var(--fg)}
+.tut .note b{color:var(--gold)}
 @media (prefers-reduced-motion: reduce){
   *{animation-duration:.001s!important;transition-duration:.001s!important}
 }
@@ -953,22 +956,28 @@ function arrow(){ return '<span class="arrow">➜</span>'; }
 const TUT=[
  {ct:'The goal', title:'Welcome to Tariff Tangle',
   vis:()=> tileHTML('dinner',1)+arrow()+tileHTML('dinner',2)+arrow()+tileHTML('dinner',3)+'<span class="arrow">🚚</span>',
-  text:"You're stocking up for the US and Canada over the holiday season. Build raw materials into finished goods and ship them to your cart before your moves run out."},
+  text:"You're stocking up for the US and Canada over the holiday season. Build raw materials into finished goods and ship them to your cart before your moves run out.",
+  note:"Trade with Canada supports millions of US jobs, and the US sells more to Canada than to any other country."},
  {ct:'Step 1', title:'Swap and match 3',
   vis:()=> tileHTML('maple',1)+tileHTML('maple',1)+tileHTML('maple',1)+arrow()+tileHTML('maple',2),
-  text:"Tap a tile, then a neighbour, to swap them (or drag). Line up three of the same tile. They don't just vanish, they combine into the next stage up the supply chain."},
+  text:"Tap a tile, then a neighbour, to swap them (or drag). Line up three of the same tile. They don't just vanish, they combine into the next stage up the supply chain.",
+  note:"Real supply chains work this way: raw materials become parts, then finished products, often crossing the US-Canada border at each step."},
  {ct:'Step 2', title:'Build it, then ship it',
   vis:()=> tileHTML('tree',1)+arrow()+tileHTML('tree',2)+arrow()+tileHTML('tree',3),
-  text:"Watch the dots: raw material (1) becomes a part (2) becomes a finished good (3). The instant a good is finished, it ships to your Holiday Cart and scores big."},
+  text:"Watch the dots: raw material (1) becomes a part (2) becomes a finished good (3). The instant a good is finished, it ships to your Holiday Cart and scores big.",
+  note:"The US and Canada are each other's biggest customers, trading more than $2 billion in goods and services every day."},
  {ct:'Why it matters', title:'Every good crosses the border',
   vis:()=> '<span class="flagline">🇨🇦 ➜ 🚗 ➜ 🇺🇸</span>',
-  text:"The goods you build are made by both countries together. One car part can cross the US-Canada border four times before assembly. That is the real supply chain you're playing."},
+  text:"The goods you build are made by both countries together. One car part can cross the US-Canada border four times before assembly. That is the real supply chain you're playing.",
+  note:"About half the content of a car built in Canada actually comes from the United States. (USTR)"},
  {ct:'Watch out', title:'Tariffs tax everything you ship',
   vis:()=> gateHTML(25)+'<span class="arrow">=</span><span class="cartex">🎄 Tree $60 <span class="sur">+$9 tariff</span></span>',
-  text:"Striped tariff tiles can't be swapped, matched, or cleared by playing. While any sit on the board, every good you ship pays a surcharge. The only way to remove them is to reach a trade deal."},
+  text:"Striped tariff tiles can't be swapped, matched, or cleared by playing. While any sit on the board, every good you ship pays a surcharge. The only way to remove them is to reach a trade deal.",
+  note:"A tariff is a tax collected at the border. It gets built into prices, so businesses and families end up paying more."},
  {ct:'Your edge', title:'Reach a Trade Deal',
   vis:()=> '<span class="flagline">🇺🇸 🇨🇦 🏛️ 🤝</span>',
-  text:"Shipping goods and making big matches wins support from both leaders, Congress and Parliament. When all four are on board, sign the deal to clear every tariff at once, the only way tariffs come down."},
+  text:"Shipping goods and making big matches wins support from both leaders, Congress and Parliament. When all four are on board, sign the deal to clear every tariff at once, the only way tariffs come down.",
+  note:"In reality, bringing tariffs down takes an agreement that leaders and lawmakers in both countries support."},
 ];
 let tutIdx=0, tutThenStart=false;
 function openTutorial(thenStart){ tutThenStart=thenStart; tutIdx=0; renderTut(); }
@@ -979,7 +988,9 @@ function renderTut(){
   host.innerHTML='<div class="tut-ov"><div class="tut">'+
     '<div class="vis">'+s.vis()+'</div>'+
     '<div class="body"><span class="step-ct">'+s.ct+' · '+(tutIdx+1)+' of '+TUT.length+'</span>'+
-      '<h2>'+s.title+'</h2><p>'+s.text+'</p></div>'+
+      '<h2>'+s.title+'</h2><p>'+s.text+'</p>'+
+      (s.note?'<div class="note"><b>In real trade:</b> '+s.note+'</div>':'')+
+    '</div>'+
     '<div class="nav"><button class="skip" id="tut-skip">'+(tutThenStart?'Skip':'Close')+'</button>'+
     '<div class="dots2">'+dots+'</div><div style="display:flex;gap:8px">'+
       (tutIdx>0?'<button class="btn ghost" id="tut-back" style="padding:10px 15px">Back</button>':'')+
@@ -1008,6 +1019,7 @@ function showLevelIntro(li){
       '<h2>Build these goods</h2>'+
       '<p style="margin:2px 0 12px">Match three of a tile to move it up the chain: raw material, then part, then finished good. Ship '+L.goal+' finished goods in '+L.moves+' moves. Tariffs tax every shipment until you sign a trade deal.</p>'+
       '<div class="chains" style="--cell:42px">'+L.fams.map(chainRow).join('')+'</div>'+
+      '<div class="note" style="margin-top:12px"><b>In real trade:</b> these goods are built by the US and Canada together, crossing the border as they are made, and a tariff adds a tax to each one.</div>'+
     '</div>'+
     '<div style="padding:10px 22px 20px"><button class="btn" id="intro-go" style="width:100%">Start level</button></div>'+
   '</div></div>';

@@ -325,6 +325,7 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
       </div>
     </div>
     <div style="display:flex;gap:8px">
+      <button class="iconbtn" id="home" title="Start over" aria-label="Start over">↺</button>
       <button class="iconbtn" id="sound" title="Sound on / off" aria-label="Toggle sound">🔊</button>
       <button class="iconbtn" id="help" title="How to play" aria-label="How to play">?</button>
       <button class="iconbtn" id="theme" title="Switch light / dark" aria-label="Switch theme">◐</button>
@@ -1007,6 +1008,9 @@ function openAbout(){
 }
 function closeAbout(){ document.getElementById('banner-host').innerHTML=''; }
 const _about=document.getElementById('about-btn'); if(_about)_about.addEventListener('click',openAbout);
+const _home=document.getElementById('home');
+if(_home)_home.addEventListener('click',()=>{ clearTimeout(hintTimer); clearHint();
+  document.getElementById('banner-host').innerHTML=''; busy=false; sel=null; show('start'); });
 
 // ---------- sound ----------
 let muted=false; try{ muted=localStorage.getItem('tt-muted')==='1'; }catch(e){}

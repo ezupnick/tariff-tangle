@@ -79,6 +79,45 @@ button{font-family:var(--disp);cursor:pointer}
 .btnrow{display:flex;flex-wrap:wrap;gap:10px}
 .fineprint{font-size:.76rem;color:var(--muted);max-width:66ch}
 
+/* ---------- hero (start) ---------- */
+.herobanner{position:relative;overflow:hidden;border-radius:20px;padding:34px 26px 26px;
+  background:radial-gradient(130% 130% at 12% -10%, #1d5340 0%, #113124 52%, #0c1f18 100%);
+  border:1px solid rgba(255,255,255,.09);box-shadow:var(--shadow);color:#f1faf5;
+  display:flex;flex-direction:column;gap:15px}
+.lights{position:absolute;top:0;left:20px;right:20px;display:flex;justify-content:space-between}
+.lights i{width:9px;height:9px;border-radius:50%;margin-top:8px;box-shadow:0 0 9px currentColor}
+.lights i:nth-child(5n+1){background:#e4544b;color:#e4544b}
+.lights i:nth-child(5n+2){background:#e4c23f;color:#e4c23f}
+.lights i:nth-child(5n+3){background:#3fae76;color:#3fae76}
+.lights i:nth-child(5n+4){background:#5f9bd1;color:#5f9bd1}
+.lights i:nth-child(5n){background:#e8914a;color:#e8914a}
+.herobanner .eyebrow{color:#e7bd63}
+.herobanner h2{font-size:2.15rem;letter-spacing:-.02em;color:#fff;line-height:1.05}
+.herobanner .lede{color:#cbe0d6;font-size:1.02rem;max-width:52ch;margin:0}
+.herochain{display:flex;align-items:center;gap:9px;flex-wrap:wrap;--cell:46px;align-self:flex-start;max-width:100%;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:13px 15px}
+.herochain .chlabel{width:100%;font-size:.7rem;color:#9fc3b4;font-weight:800;text-transform:uppercase;
+  letter-spacing:.09em;margin-bottom:3px}
+.herochain .arrow{color:#9fc3b4;font-size:1.25rem}
+.herobanner .btn.ghost{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.22)}
+.famrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.famrow .fp{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);
+  border-radius:999px;padding:5px 11px;font-size:.78rem;font-weight:700;color:#d7e8e0}
+.how{margin-top:14px}
+.how .step{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:15px 15px 16px;box-shadow:var(--shadow)}
+.how .step .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:1.2rem;margin-bottom:10px}
+.how .step.s1 .ic{background:rgba(200,144,42,.16)}
+.how .step.s2 .ic{background:rgba(31,122,77,.16)}
+.how .step.s3 .ic{background:rgba(198,55,47,.14)}
+.how .step .t{font-family:var(--disp);font-weight:800;font-size:1.02rem;display:block}
+.how .step p{margin:.3rem 0 0;font-size:.87rem;color:var(--muted)}
+#screen-start .fineprint{margin-top:14px}
+.bycabc{background:none;border:none;color:var(--muted);font-family:var(--body);font-weight:700;font-size:.82rem;
+  cursor:pointer;padding:6px 10px;border-radius:8px;text-decoration:underline;text-underline-offset:3px}
+.bycabc:hover{color:var(--accent)}
+.about p{margin:0 0 12px;color:var(--muted);font-size:.95rem;line-height:1.55}
+.about a{font-weight:800}
+
 /* ---------- game layout ---------- */
 .game{display:flex;gap:16px;align-items:flex-start}
 .boardcol{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:10px;align-items:center}
@@ -286,28 +325,41 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
 
   <!-- START -->
   <section class="screen" id="screen-start">
-    <div class="card hero">
+    <div class="herobanner">
+      <div class="lights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <span class="eyebrow">Canadian American Business Council</span>
-      <h2>Stock the holidays. Beat the tariffs.</h2>
-      <p class="lede">Match raw materials to build them into finished holiday goods, then ship them to your cart.
-        Every good is a team effort between Canada and the US. Tariff gates make everything cost more, so clear
-        them to keep your holidays affordable.</p>
-      <div class="how">
-        <div class="step"><div class="t">🔗 Match to build</div><p>Match 3 of the same tile. Raw materials become
-          parts, parts become a finished gift. That path is the real supply chain.</p></div>
-        <div class="step"><div class="t">🚚 Ship for points</div><p>Finish a good and it ships to your Holiday Cart
-          with a price tag. Fill the shopping list before you run out of moves.</p></div>
-        <div class="step"><div class="t">🛃 Clear the tariffs</div><p>Striped tariff gates add a surcharge to anything
-          you ship. Match next to them to clear them, or bank a Trade Deal to wipe them all.</p></div>
+      <h2>Stock the season.<br>Beat the tariffs.</h2>
+      <p class="lede">The US and Canada build the holidays together. Match raw materials into finished holiday
+        goods, ship them to your cart, and clear the tariff gates to keep it all affordable.</p>
+      <div class="herochain" aria-hidden="true">
+        <span class="chlabel">From raw material to finished gift</span>
+        <div class="tile static" data-kind="good" data-family="dinner" data-tier="1"><div class="face"><span>🌾</span><span class="dots"><i></i></span></div></div>
+        <span class="arrow">➜</span>
+        <div class="tile static" data-kind="good" data-family="dinner" data-tier="2"><div class="face"><span>🦃</span><span class="dots"><i></i><i></i></span></div></div>
+        <span class="arrow">➜</span>
+        <div class="tile static" data-kind="good" data-family="dinner" data-tier="3"><div class="face"><span>🍽️</span><span class="dots"><i></i><i></i><i></i></span></div></div>
+        <span class="arrow" style="font-size:1.5rem">🚚</span>
       </div>
       <div class="btnrow">
-        <button class="btn" id="play">Start the season</button>
+        <button class="btn gold" id="play">Start the season</button>
         <button class="btn ghost" id="howto">How to play</button>
       </div>
-      <p class="fineprint">Nonpartisan and fact-based. The goods, routes and price effects are drawn from sources
-        like the USDA, EIA, USTR, Statistics Canada, the Yale Budget Lab and the Tax Foundation. In-game prices are
-        illustrative; the real figures appear on your end-of-level receipt.</p>
+      <div class="famrow" aria-hidden="true">
+        <span class="fp">🦃 Dinner</span><span class="fp">🍪 Maple</span><span class="fp">🎄 Tree</span>
+        <span class="fp">🚗 Car</span><span class="fp">💡 Lights</span>
+      </div>
     </div>
+    <div class="how">
+      <div class="step s1"><div class="ic">🔗</div><span class="t">Match to build</span>
+        <p>Match 3 of the same tile. Raw materials become parts, parts become a finished gift. That path is the real supply chain.</p></div>
+      <div class="step s2"><div class="ic">🚚</div><span class="t">Ship for points</span>
+        <p>Finish a good and it ships to your Holiday Cart with a price tag. Fill the shopping list before you run out of moves.</p></div>
+      <div class="step s3"><div class="ic">🛃</div><span class="t">Clear the tariffs</span>
+        <p>Striped tariff gates add a surcharge to anything you ship. Match next to them, or bank a Trade Deal to wipe them all.</p></div>
+    </div>
+    <p class="fineprint">Nonpartisan and fact-based. The goods, routes and price effects are drawn from sources
+      like the USDA, EIA, USTR, Statistics Canada, the Yale Budget Lab and the Tax Foundation. In-game prices are
+      illustrative; the real figures appear on your end-of-level receipt.</p>
   </section>
 
   <!-- GAME -->
@@ -415,8 +467,9 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
     </div>
   </section>
 
-  <p class="fineprint" style="text-align:center;margin:16px auto 4px">Built for the CABC to show how
-    deeply the US and Canadian economies share the holidays. Play it, then let's talk about the next build.</p>
+  <div style="text-align:center;margin:16px 0 4px">
+    <button class="bycabc" id="about-btn">By the CABC</button>
+  </div>
 </div>
 
 <div class="toastwrap" id="toasts" aria-live="polite"></div>
@@ -874,7 +927,7 @@ function arrow(){ return '<span class="arrow">➜</span>'; }
 const TUT=[
  {ct:'The goal', title:'Welcome to Tariff Tangle',
   vis:()=> tileHTML('dinner',1)+arrow()+tileHTML('dinner',2)+arrow()+tileHTML('dinner',3)+'<span class="arrow">🚚</span>',
-  text:"You're stocking the holidays shared by the US and Canada. Build raw materials into finished goods and ship them to your cart before your moves run out."},
+  text:"You're stocking up for the US and Canada over the holiday season. Build raw materials into finished goods and ship them to your cart before your moves run out."},
  {ct:'Step 1', title:'Swap and match 3',
   vis:()=> tileHTML('maple',1)+tileHTML('maple',1)+tileHTML('maple',1)+arrow()+tileHTML('maple',2),
   text:"Tap a tile, then a neighbour, to swap them (or drag). Line up three of the same tile. They don't just vanish, they combine into the next stage up the supply chain."},
@@ -920,6 +973,25 @@ function startFromPlay(){
 document.getElementById('play').addEventListener('click', startFromPlay);
 const _howto=document.getElementById('howto'); if(_howto)_howto.addEventListener('click',()=>openTutorial(false));
 const _help=document.getElementById('help'); if(_help)_help.addEventListener('click',()=>openTutorial(false));
+
+// ---------- about ----------
+function openAbout(){
+  const host=document.getElementById('banner-host');
+  host.innerHTML='<div class="tut-ov" id="about-ov"><div class="tut" style="max-width:460px">'+
+    '<div class="body about" style="padding:24px 22px 8px">'+
+      '<h2>By the CABC</h2>'+
+      '<p>This game is brought to you by the Canadian American Business Council (CABC), the leading nonprofit, nonpartisan organization dedicated to fostering dialogue between the public and private sectors in the U.S. and Canada.</p>'+
+      '<p>Canada and the United States are each other\'s most important customer and supplier. Since 1987, the CABC has worked to preserve and strengthen that relationship.</p>'+
+      '<p style="text-align:center;margin-bottom:4px"><a href="https://cabc.co" target="_blank" rel="noopener">Learn more at cabc.co &rarr;</a></p>'+
+    '</div>'+
+    '<div style="padding:0 22px 22px"><button class="btn" id="about-close" style="width:100%">Close</button></div>'+
+  '</div></div>';
+  document.getElementById('about-close').onclick=closeAbout;
+  const ov=document.getElementById('about-ov');
+  ov.addEventListener('click',e=>{ if(e.target===ov)closeAbout(); });
+}
+function closeAbout(){ document.getElementById('banner-host').innerHTML=''; }
+const _about=document.getElementById('about-btn'); if(_about)_about.addEventListener('click',openAbout);
 
 // ---------- sound ----------
 let muted=false; try{ muted=localStorage.getItem('tt-muted')==='1'; }catch(e){}

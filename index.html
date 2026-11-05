@@ -498,6 +498,7 @@ const COLS=7, ROWS=7;
 const SHARE_URL = ""; // TODO: set to the live game URL before launch (used in share links)
 const PROMO_URL = SHARE_URL || "https://cabc.co";
 const SHARE_TAG = "TariffTangle";
+const DEAL_STEP = 10; // momentum points needed to win over each of the 4 parties
 const META = {levels:{}}; // per-level results for a playthrough, keyed by level index
 
 const FAM = {
@@ -538,7 +539,7 @@ const board = document.getElementById('board');
 
 function freshState(li){
   const L = LEVELS[li];
-  return {li, grid:emptyGrid(), moves:L.moves, score:0, shipped:0, deal:0, dealt:false,
+  return {li, grid:emptyGrid(), moves:L.moves, score:0, shipped:0, deal:0, dealt:false, mom:0,
     cart:[], base:0, extra:0, factsSeen:{}};
 }
 function emptyGrid(){ const g=[]; for(let r=0;r<ROWS;r++){g.push(new Array(COLS).fill(null));} return g; }
@@ -682,6 +683,8 @@ async function attemptSwap(a,b){
 }
 
 // ---------- resolve ----------
+function gainSupport(n){ if(S.dealt)return; S.mom+=n;
+  while(S.mom>=DEAL_STEP && S.deal<4){ S.deal++; S.mom-=DEAL_STEP; } }
 async function resolveAll(){
   let combo=0;
   while(true){
@@ -693,10 +696,11 @@ async function resolveAll(){
     await wait(210);
     cleared.forEach(k=>{ const r=(k/COLS)|0,c=k%COLS; const t=S.grid[r][c]; if(t){const el=els.get(t.id); if(el){el.remove();els.delete(t.id);}} });
     S.score += cleared.size*5*combo;
+    gainSupport(cleared.size);
     cleared.forEach(k=>{ const r=(k/COLS)|0,c=k%COLS; S.grid[r][c]=null; });
     const usedPivot=new Set();
     for(const run of runs){
-      if(run.cells.length>=4) S.deal=Math.min(4,S.deal+1);
+      if(run.cells.length>=4) gainSupport(6);
       if(run.tier===1){
         let pv=choosePivot(run,usedPivot); if(pv){ usedPivot.add(key(pv[0],pv[1]));
           S.grid[pv[0]][pv[1]]=newGood(run.family,2); S.score+=15*combo; }
@@ -731,7 +735,7 @@ function shipProduct(fam, combo){
   const surcharge = (f.exempt||!gated) ? 0 : Math.round(f.price*f.tariff);
   S.cart.push({family:fam, base:f.price, sur:surcharge, exempt:f.exempt});
   S.base+=f.price; S.extra+=surcharge; S.shipped++;
-  S.deal=Math.min(4,S.deal+1);
+  gainSupport(8);
   S.score += (f.price + 100)*combo;
   if(!S.factsSeen[fam]){ S.factsSeen[fam]=true;
     toast('<b>'+f.glyph[2]+' '+f.name+' shipped.</b> '+f.fact, {dur:7000, big:true}); }

@@ -374,7 +374,7 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
       <div class="step s2"><div class="ic">🚚</div><span class="t">Ship for points</span>
         <p>Finish a good and it ships to your Holiday Cart with a price tag. Fill the shopping list before you run out of moves.</p></div>
       <div class="step s3"><div class="ic">🛃</div><span class="t">Clear the tariffs</span>
-        <p>Striped tariff gates can't be matched or moved, and they tax everything you ship. The only way to clear them is to reach a US-Canada trade deal.</p></div>
+        <p>Striped tariff gates can't be matched or moved, and they tax everything you ship, which means higher prices for families over the holidays. The only way to clear them is to reach a US-Canada trade deal.</p></div>
     </div>
     <p class="fineprint">Fact-based. The goods, routes and price effects are drawn from sources
       like the USDA, EIA, USTR, Statistics Canada, the Yale Budget Lab and the Tax Foundation. In-game prices are
@@ -428,7 +428,7 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
           <div class="legend">
             <b>•</b> raw material &nbsp; <b>••</b> part &nbsp; <b>•••</b> finished.<br>
             Build 1→2→3 to ship a finished good. The striped tile is a <b>tariff gate</b>: it can't be moved or
-            matched and taxes everything you ship. Only a trade deal clears tariffs.
+            matched and taxes everything you ship, raising holiday prices for families. Only a trade deal clears tariffs.
           </div>
         </div>
       </aside>
@@ -747,7 +747,7 @@ function shipProduct(fam, combo){
   S.score += (f.price + 100)*combo;
   if(!S.factsSeen[fam]){ S.factsSeen[fam]=true;
     toast('<b>'+f.glyph[2]+' '+f.name+' shipped.</b> '+f.fact, {dur:7000, big:true}); }
-  else { toast(f.glyph[2]+' '+f.name+(surcharge?(' shipped. Tariff added $'+surcharge+'.'):' shipped, tariff-free!')); }
+  else { toast(f.glyph[2]+' '+f.name+(surcharge?(' shipped. The tariff adds $'+surcharge+' to the price families pay.'):' shipped, tariff-free!')); }
 }
 
 // ---------- trade deal ----------
@@ -786,7 +786,7 @@ function updateHUD(){
   const bar=document.getElementById('afford-bar'); bar.style.width=pct+'%';
   bar.style.background = pct>=70?'var(--good)':pct>=40?'var(--gold)':'var(--bad)';
   document.getElementById('afford-pct').textContent=pct+'%';
-  document.getElementById('afford-note').textContent = S.extra>0 ? ('$'+S.extra+' lost to tariffs') : 'No tariff cost yet';
+  document.getElementById('afford-note').textContent = S.extra>0 ? ('$'+S.extra+' in higher holiday prices') : 'No tariff cost yet';
   const db=document.getElementById('dealbtn');
   const seatsEls=document.querySelectorAll('#deal-seats .seat');
   if(S.dealt){
@@ -905,8 +905,8 @@ function showReceipt(won){
   setTimeout(()=>{ bb.style.width=Math.round(base/maxv*100)+'%'; bp.style.width=Math.round(paid/maxv*100)+'%'; },60);
   bb.textContent='$'+base.toLocaleString(); bp.textContent='$'+paid.toLocaleString();
   document.getElementById('r-takeaway').innerHTML = won
-    ? 'Tariffs are a tax paid at the border that flows into shelf prices. Economists estimate they cost the average US household about <b>$1,000 to $1,800 a year</b>. A durable US-Canada deal is how that cost comes down, and how businesses get the certainty to invest and hire.'
-    : 'Every tariff gate left on the board when you ship adds a surcharge. Bank a Trade Deal to wipe them, then ship a run of finished goods.';
+    ? 'Tariffs are a tax paid at the border that flows into shelf prices, so families pay more for the things they buy, including over the holidays. Economists estimate tariffs cost the average US household about <b>$1,000 to $1,800 a year</b>. A durable US-Canada deal is how that cost comes down, and how businesses get the certainty to invest and hire.'
+    : 'Every tariff gate left on the board when you ship adds a surcharge, so families pay more over the holidays. Sign a trade deal to clear them, then ship a run of finished goods.';
   const fl=document.getElementById('r-facts'); fl.innerHTML='';
   const seen=Object.keys(S.factsSeen);
   (seen.length?seen:LEVELS[S.li].fams).forEach(fam=>{ const f=FAM[fam];
@@ -972,8 +972,8 @@ const TUT=[
   note:"About half the content of a car built in Canada actually comes from the United States. (USTR)"},
  {ct:'Watch out', title:'Tariffs tax everything you ship',
   vis:()=> gateHTML(25)+'<span class="arrow">=</span><span class="cartex">🎄 Tree $60 <span class="sur">+$9 tariff</span></span>',
-  text:"Striped tariff tiles can't be swapped, matched, or cleared by playing. While any sit on the board, every good you ship pays a surcharge. The only way to remove them is to reach a trade deal.",
-  note:"A tariff is a tax collected at the border. It gets built into prices, so businesses and families end up paying more."},
+  text:"Striped tariff tiles can't be swapped, matched, or cleared by playing. While any sit on the board, every good you ship pays a surcharge, so families pay more for the holidays. The only way to remove them is to reach a trade deal.",
+  note:"A tariff is a tax collected at the border. It gets built into the price of goods, so families pay more for their holidays."},
  {ct:'Your edge', title:'Reach a Trade Deal',
   vis:()=> '<span class="flagline">🇺🇸 🇨🇦 🏛️ 🤝</span>',
   text:"Shipping goods and making big matches wins support from both leaders, Congress and Parliament. When all four are on board, sign the deal to clear every tariff at once, the only way tariffs come down.",
@@ -1019,7 +1019,7 @@ function showLevelIntro(li){
       '<h2>Build these goods</h2>'+
       '<p style="margin:2px 0 12px">Match three of a tile to move it up the chain: raw material, then part, then finished good. Ship '+L.goal+' finished goods in '+L.moves+' moves. Tariffs tax every shipment until you sign a trade deal.</p>'+
       '<div class="chains" style="--cell:42px">'+L.fams.map(chainRow).join('')+'</div>'+
-      '<div class="note" style="margin-top:12px"><b>In real trade:</b> these goods are built by the US and Canada together, crossing the border as they are made, and a tariff adds a tax to each one.</div>'+
+      '<div class="note" style="margin-top:12px"><b>In real trade:</b> these goods are built by the US and Canada together, crossing the border as they are made. A tariff taxes each one, which means higher prices for families over the holidays.</div>'+
     '</div>'+
     '<div style="padding:10px 22px 20px"><button class="btn" id="intro-go" style="width:100%">Start level</button></div>'+
   '</div></div>';

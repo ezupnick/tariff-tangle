@@ -306,6 +306,11 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
   border-radius:10px;padding:8px 10px;font-size:.82rem;font-weight:700}
 .tut .cartex .sur{color:var(--bad)}
 .tut .flagline{font-size:1.9rem;display:flex;align-items:center;gap:8px}
+.chains{display:flex;flex-direction:column;gap:11px}
+.chainrow{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.chainrow .cu{display:flex;flex-direction:column;align-items:center;gap:3px}
+.chainrow .cu small{font-size:.64rem;font-weight:800;color:var(--muted);text-align:center;max-width:58px;line-height:1.1}
+.chains .arrow{color:var(--muted);font-size:1.05rem;align-self:flex-start;margin-top:14px}
 @media (prefers-reduced-motion: reduce){
   *{animation-duration:.001s!important;transition-duration:.001s!important}
 }
@@ -505,7 +510,7 @@ const FAM = {
   dinner:{name:"Holiday Dinner", glyph:["🌾","🦃","🍽️"], tname:["Grain","Turkey","Dinner"],
     price:85, tariff:0.08, exempt:false,
     fact:"Canada supplies about 86% of US frozen fries and is the #2 US farm market. (USDA)"},
-  maple:{name:"Maple & Baking", glyph:["🍁","🍯","🍪"], tname:["Sap","Syrup","Cookies"],
+  maple:{name:"Maple & Baking", glyph:["🍁","🍯","🍪"], tname:["Maple","Syrup","Cookies"],
     price:22, tariff:0.08, exempt:false,
     fact:"Canada makes about 73% of the world's maple syrup, nearly all of it from Quebec. (Agriculture Canada)"},
   tree:{name:"Tree & Trimmings", glyph:["🌲","🪵","🎄"], tname:["Sapling","Lumber","Tree"],
@@ -934,10 +939,8 @@ function startLevel(li){
   document.getElementById('lvl-name').textContent=LEVELS[li].name;
   show('game'); updateHUD(); renderCart();
   sizeBoard(); render();
-  const L=LEVELS[li];
-  showBanner(L.name.split(' ')[0], L.name.replace(/^\S+\s/,''),
-    'Ship '+L.goal+' finished goods in '+L.moves+' moves. Clear the tariff gates to keep prices down.', 1600);
-  scheduleHint(); saveSnap();
+  showLevelIntro(li);
+  saveSnap();
 }
 
 // ---------- tutorial ----------
@@ -987,6 +990,29 @@ function renderTut(){
   document.getElementById('tut-skip').onclick=()=>{ closeTut(); if(tutThenStart)startLevel(0); };
 }
 function closeTut(){ document.getElementById('banner-host').innerHTML=''; }
+
+// ---------- level intro (goods guide) ----------
+function chainRow(fam){ const f=FAM[fam];
+  return '<div class="chainrow">'+
+    '<div class="cu">'+tileHTML(fam,1)+'<small>'+f.tname[0]+'</small></div>'+
+    '<span class="arrow">➜</span>'+
+    '<div class="cu">'+tileHTML(fam,2)+'<small>'+f.tname[1]+'</small></div>'+
+    '<span class="arrow">➜</span>'+
+    '<div class="cu">'+tileHTML(fam,3)+'<small>'+f.tname[2]+'</small></div>'+
+  '</div>'; }
+function showLevelIntro(li){
+  const L=LEVELS[li]; const host=document.getElementById('banner-host');
+  host.innerHTML='<div class="tut-ov" id="intro-ov"><div class="tut" style="max-width:500px">'+
+    '<div class="body" style="padding:22px 22px 8px">'+
+      '<span class="step-ct">'+L.name+'</span>'+
+      '<h2>Build these goods</h2>'+
+      '<p style="margin:2px 0 12px">Match three of a tile to move it up the chain: raw material, then part, then finished good. Ship '+L.goal+' finished goods in '+L.moves+' moves. Tariffs tax every shipment until you sign a trade deal.</p>'+
+      '<div class="chains" style="--cell:42px">'+L.fams.map(chainRow).join('')+'</div>'+
+    '</div>'+
+    '<div style="padding:10px 22px 20px"><button class="btn" id="intro-go" style="width:100%">Start level</button></div>'+
+  '</div></div>';
+  document.getElementById('intro-go').onclick=()=>{ host.innerHTML=''; scheduleHint(); };
+}
 
 function startFromPlay(){
   let seen=false; try{ seen=localStorage.getItem('tt-seen-tut')==='1'; }catch(e){}

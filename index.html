@@ -128,6 +128,17 @@ button{font-family:var(--disp);cursor:pointer}
 .levelbar .nm{font-family:var(--disp);font-weight:700;font-size:1.05rem;display:flex;gap:8px;align-items:center}
 .goalpill{font-family:var(--disp);font-weight:700;font-size:.8rem;background:var(--surface);border:1px solid var(--line);
   border-radius:999px;padding:5px 11px;box-shadow:var(--shadow)}
+.hintbtn{font-family:var(--disp);font-weight:700;font-size:.8rem;background:var(--surface);border:1px solid var(--line);
+  border-radius:999px;padding:5px 11px;color:var(--fg);box-shadow:var(--shadow)}
+.hintbtn:hover{color:var(--accent)}
+.costbar{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 16px;box-shadow:var(--shadow);
+  transition:border-color .3s, background .3s}
+.costbar.hot{border-color:var(--bad);background:rgba(198,55,47,.09)}
+.costbar .cb-label{font-family:var(--disp);font-weight:700;font-size:.9rem;color:var(--muted)}
+.costbar.hot .cb-label{color:var(--bad)}
+.costbar .cb-amt{font-family:var(--disp);font-weight:800;font-size:1.5rem;font-variant-numeric:tabular-nums;color:var(--muted)}
+.costbar.hot .cb-amt{color:var(--bad)}
 
 .boardwrap{width:100%;display:flex;justify-content:center}
 .board{position:relative;background:var(--surface-2);border:1px solid var(--line);border-radius:16px;
@@ -387,7 +398,14 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
       <div class="boardcol">
         <div class="levelbar">
           <span class="nm" id="lvl-name">🦃 Thanksgiving Table</span>
-          <span class="goalpill" id="lvl-goal">Shipped 0 / 4</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="hintbtn" id="hint" title="Show a possible move">💡 Hint</button>
+            <span class="goalpill" id="lvl-goal">Shipped 0 / 4</span>
+          </div>
+        </div>
+        <div class="costbar" id="costbar">
+          <span class="cb-label">Tariffs added to holiday prices</span>
+          <span class="cb-amt" id="cb-amt">$0</span>
         </div>
         <div class="boardwrap"><div class="board" id="board" aria-label="Game board"></div></div>
       </div>
@@ -454,17 +472,7 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
       <p id="r-takeaway" style="font-size:.95rem;margin:0"></p>
       <div class="factlist" id="r-facts"></div>
       <div id="r-share"></div>
-      <div class="srcnote">
-        <details class="src"><summary>About the numbers (sources)</summary>
-          <ul>
-            <li>Household tariff cost ~$1,000–$1,800/yr: Tax Foundation, Yale Budget Lab, Peterson Institute (2025–26).</li>
-            <li>A car part crossing the border 4 times: NBC News. ~50% US content in Canadian-built cars: USTR.</li>
-            <li>Canada ~73% of world maple syrup: Agriculture and Agri-Food Canada. ~86% of US frozen fries: USDA.</li>
-            <li>Canada ~60% of US oil imports and direct power to the Northeast: EIA. Energy is currently tariff-exempt.</li>
-            <li>In-game prices and surcharges are illustrative, scaled from these real ranges.</li>
-          </ul>
-        </details>
-      </div>
+      <div class="srcnote"><button class="bycabc" id="r-sources" style="padding:4px 0">View sources</button></div>
       <div class="btnrow">
         <button class="btn" id="r-next">Next level</button>
         <button class="btn ghost" id="r-replay">Replay level</button>
@@ -491,8 +499,9 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
     </div>
   </section>
 
-  <div style="text-align:center;margin:16px 0 4px">
+  <div style="text-align:center;margin:16px 0 4px;display:flex;gap:18px;justify-content:center;flex-wrap:wrap">
     <button class="bycabc" id="about-btn">By the CABC</button>
+    <button class="bycabc" id="sources-btn">Sources</button>
   </div>
 </div>
 
@@ -512,19 +521,19 @@ const META = {levels:{}}; // per-level results for a playthrough, keyed by level
 const FAM = {
   dinner:{name:"Holiday Dinner", glyph:["🌾","🦃","🍽️"], tname:["Grain","Turkey","Dinner"],
     price:85, tariff:0.08, exempt:false,
-    fact:"Canada supplies about 86% of US frozen fries and is the #2 US farm market. (USDA)"},
+    fact:"Canada supplies about 86% of US frozen fries and is the #2 US farm market.", src:"USDA"},
   maple:{name:"Maple & Baking", glyph:["🍁","🍯","🍪"], tname:["Maple","Syrup","Cookies"],
     price:22, tariff:0.08, exempt:false,
-    fact:"Canada makes about 73% of the world's maple syrup, nearly all of it from Quebec. (Agriculture Canada)"},
+    fact:"Canada makes about 73% of the world's maple syrup, nearly all of it from Quebec.", src:"Agriculture and Agri-Food Canada"},
   tree:{name:"Tree & Trimmings", glyph:["🌲","🪵","🎄"], tname:["Sapling","Lumber","Tree"],
     price:60, tariff:0.15, exempt:false,
-    fact:"Canada sends the US most of its fresh Christmas trees, and softwood lumber carries roughly a 35% duty. (StatCan)"},
+    fact:"Canada sends the US most of its fresh Christmas trees, and softwood lumber carries roughly a 35% duty.", src:"Statistics Canada; US Commerce"},
   auto:{name:"Car Under the Tree", glyph:["🔩","⚙️","🚗"], tname:["Metal","Parts","Car"],
     price:480, tariff:0.22, exempt:false,
-    fact:"One auto part can cross the US-Canada border 4 times before assembly; a US-built car is about 50% US content. (NBC, USTR)"},
+    fact:"One auto part can cross the US-Canada border 4 times before assembly; a US-built car is about 50% US content.", src:"NBC News; USTR"},
   energy:{name:"Holiday Lights", glyph:["🛢️","🔌","💡"], tname:["Fuel","Power","Lights"],
     price:40, tariff:0.0, exempt:true,
-    fact:"Canada supplies about 60% of US oil imports and powers the Northeast grid, with no tariff on energy today. (EIA)"},
+    fact:"Canada supplies about 60% of US oil imports and powers the Northeast grid, with no tariff on energy today.", src:"EIA"},
 };
 
 const LEVELS = [
@@ -600,12 +609,11 @@ function swapData(r,c,r2,c2){ const t=S.grid[r][c]; S.grid[r][c]=S.grid[r2][c2];
 
 // ---------- hint ----------
 function clearHint(){ els.forEach(el=>el.classList.remove('hint')); }
-function scheduleHint(){ clearTimeout(hintTimer); clearHint();
-  if(!S || document.getElementById('screen-game').hidden) return;
-  hintTimer=setTimeout(()=>{ if(busy)return; const h=findHint();
-    if(h){ const a=elAt(h[0].r,h[0].c), b=elAt(h[1].r,h[1].c);
-      if(a)a.classList.add('hint'); if(b)b.classList.add('hint'); } }, 6500);
-}
+function scheduleHint(){ clearTimeout(hintTimer); clearHint(); }
+function showHint(){ if(busy || !S || document.getElementById('screen-game').hidden) return; clearHint();
+  const h=findHint();
+  if(h){ const a=elAt(h[0].r,h[0].c), b=elAt(h[1].r,h[1].c);
+    if(a)a.classList.add('hint'); if(b)b.classList.add('hint'); } }
 
 // ---------- rendering ----------
 function makeEl(t){
@@ -787,6 +795,8 @@ function updateHUD(){
   bar.style.background = pct>=70?'var(--good)':pct>=40?'var(--gold)':'var(--bad)';
   document.getElementById('afford-pct').textContent=pct+'%';
   document.getElementById('afford-note').textContent = S.extra>0 ? ('$'+S.extra+' in higher holiday prices') : 'No tariff cost yet';
+  const cb=document.getElementById('costbar'), cbAmt=document.getElementById('cb-amt');
+  if(cb&&cbAmt){ cbAmt.textContent='$'+S.extra.toLocaleString(); cb.classList.toggle('hot', S.extra>0); }
   const db=document.getElementById('dealbtn');
   const seatsEls=document.querySelectorAll('#deal-seats .seat');
   if(S.dealt){
@@ -969,7 +979,7 @@ const TUT=[
  {ct:'Why it matters', title:'Every good crosses the border',
   vis:()=> '<span class="flagline">🇨🇦 ➜ 🚗 ➜ 🇺🇸</span>',
   text:"The goods you build are made by both countries together. One car part can cross the US-Canada border four times before assembly. That is the real supply chain you're playing.",
-  note:"About half the content of a car built in Canada actually comes from the United States. (USTR)"},
+  note:"About half the content of a car built in Canada actually comes from the United States."},
  {ct:'Watch out', title:'Tariffs tax everything you ship',
   vis:()=> gateHTML(25)+'<span class="arrow">=</span><span class="cartex">🎄 Tree $60 <span class="sur">+$9 tariff</span></span>',
   text:"Striped tariff tiles can't be swapped, matched, or cleared by playing. While any sit on the board, every good you ship pays a surcharge, so families pay more for the holidays. The only way to remove them is to reach a trade deal.",
@@ -1052,7 +1062,28 @@ function openAbout(){
   ov.addEventListener('click',e=>{ if(e.target===ov)closeAbout(); });
 }
 function closeAbout(){ document.getElementById('banner-host').innerHTML=''; }
+function openSources(){
+  const host=document.getElementById('banner-host');
+  const fam=Object.keys(FAM).map(k=>{const f=FAM[k]; return '<li><b>'+f.name+'.</b> '+f.fact+' ('+f.src+')</li>';}).join('');
+  host.innerHTML='<div class="tut-ov" id="src-ov"><div class="tut" style="max-width:540px">'+
+    '<div class="body about" style="padding:22px 22px 6px">'+
+      '<h2>Sources</h2>'+
+      '<p style="margin:0 0 10px">Every fact in the game is drawn from a public source. In-game prices and surcharges are illustrative, scaled from these ranges.</p>'+
+      '<ul style="margin:0;padding-left:18px;font-size:.86rem;line-height:1.6;color:var(--muted)">'+
+        fam+
+        '<li><b>Household cost.</b> Tariffs cost the average US household about $1,000 to $1,800 a year (Tax Foundation, Yale Budget Lab, Peterson Institute, 2025-26).</li>'+
+        '<li><b>Trade and jobs.</b> US-Canada trade totals and the jobs they support (US Census Bureau, trade.gov, US Chamber of Commerce, Statistics Canada).</li>'+
+      '</ul>'+
+    '</div>'+
+    '<div style="padding:10px 22px 20px"><button class="btn" id="src-close" style="width:100%">Close</button></div>'+
+  '</div></div>';
+  document.getElementById('src-close').onclick=()=>{host.innerHTML='';};
+  const ov=document.getElementById('src-ov'); ov.addEventListener('click',e=>{ if(e.target===ov)host.innerHTML=''; });
+}
 const _about=document.getElementById('about-btn'); if(_about)_about.addEventListener('click',openAbout);
+const _srcBtn=document.getElementById('sources-btn'); if(_srcBtn)_srcBtn.addEventListener('click',openSources);
+const _rsrc=document.getElementById('r-sources'); if(_rsrc)_rsrc.addEventListener('click',openSources);
+const _hint=document.getElementById('hint'); if(_hint)_hint.addEventListener('click',showHint);
 const _home=document.getElementById('home');
 if(_home)_home.addEventListener('click',()=>{ clearTimeout(hintTimer); clearHint();
   document.getElementById('banner-host').innerHTML=''; busy=false; sel=null; show('start'); });

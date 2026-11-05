@@ -191,6 +191,14 @@ button{font-family:var(--disp);cursor:pointer}
 .deal .chg{height:7px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;overflow:hidden}
 .deal .chg i{display:block;height:100%;background:var(--gold);width:0%;transition:width .3s ease}
 .deal small{font-size:.72rem;color:var(--muted)}
+.seats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:2px}
+.seat{display:flex;align-items:center;gap:7px;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:9px;padding:6px 8px;opacity:.45;transition:opacity .25s, border-color .25s, background .25s}
+.seat .ico{font-size:1rem;filter:grayscale(.6)}
+.seat small{font-family:var(--body);font-weight:700;font-size:.66rem;color:var(--muted);line-height:1.1}
+.seat.on{opacity:1;border-color:var(--green);background:rgba(31,122,77,.12)}
+.seat.on .ico{filter:none}
+.seat.on small{color:var(--fg)}
 
 .cart{display:flex;flex-direction:column}
 .cart .items{max-height:188px;overflow:auto;display:flex;flex-direction:column;gap:6px;margin:-2px -2px 8px;padding:2px}
@@ -355,7 +363,7 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
       <div class="step s2"><div class="ic">🚚</div><span class="t">Ship for points</span>
         <p>Finish a good and it ships to your Holiday Cart with a price tag. Fill the shopping list before you run out of moves.</p></div>
       <div class="step s3"><div class="ic">🛃</div><span class="t">Clear the tariffs</span>
-        <p>Striped tariff gates add a surcharge to anything you ship. Match next to them, or bank a Trade Deal to wipe them all.</p></div>
+        <p>Striped tariff gates add a surcharge to anything you ship. Match next to them, or reach a US-Canada trade deal to wipe them all.</p></div>
     </div>
     <p class="fineprint">Fact-based. The goods, routes and price effects are drawn from sources
       like the USDA, EIA, USTR, Statistics Canada, the Yale Budget Lab and the Tax Foundation. In-game prices are
@@ -385,10 +393,15 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
             <small id="afford-note">No tariff cost yet</small></div>
         </div>
         <div class="card widget deal">
-          <h3 style="margin-bottom:2px">Trade Deal</h3>
-          <button class="dealbtn" id="dealbtn" disabled>🤝 Bank a deal to clear tariffs</button>
-          <div class="chg"><i id="deal-fill"></i></div>
-          <small id="deal-note">Charge by clearing gates and making big matches.</small>
+          <h3 style="margin-bottom:6px">Reach a Trade Deal</h3>
+          <div class="seats" id="deal-seats">
+            <span class="seat"><span class="ico">🇺🇸</span><small>President</small></span>
+            <span class="seat"><span class="ico">🇨🇦</span><small>Prime Minister</small></span>
+            <span class="seat"><span class="ico">🇺🇸</span><small>Congress</small></span>
+            <span class="seat"><span class="ico">🇨🇦</span><small>Parliament</small></span>
+          </div>
+          <button class="dealbtn" id="dealbtn" disabled>Build support for a deal</button>
+          <small id="deal-note">A deal needs both leaders and both legislatures on board. Clear tariffs and make big matches to win their support.</small>
         </div>
         <div class="card widget cart">
           <h3>Holiday Cart</h3>
@@ -685,11 +698,11 @@ async function resolveAll(){
     for(const [r,c] of gateCells){ const t=S.grid[r][c]; if(t){const el=els.get(t.id); if(el){el.remove();els.delete(t.id);}} }
     S.score += cleared.size*5*combo;
     if(gateCells.length) sfx('gate');
-    for(const [r,c] of gateCells){ S.grid[r][c]=null; S.deal=Math.min(3,S.deal+1); S.score+=20; }
+    for(const [r,c] of gateCells){ S.grid[r][c]=null; S.deal=Math.min(4,S.deal+1); S.score+=20; }
     cleared.forEach(k=>{ const r=(k/COLS)|0,c=k%COLS; S.grid[r][c]=null; });
     const usedPivot=new Set();
     for(const run of runs){
-      if(run.cells.length>=4) S.deal=Math.min(3,S.deal+1);
+      if(run.cells.length>=4) S.deal=Math.min(4,S.deal+1);
       if(run.tier===1){
         let pv=choosePivot(run,usedPivot); if(pv){ usedPivot.add(key(pv[0],pv[1]));
           S.grid[pv[0]][pv[1]]=newGood(run.family,2); S.score+=15*combo; }
@@ -732,8 +745,8 @@ function shipProduct(fam, combo){
 
 // ---------- trade deal ----------
 document.getElementById('dealbtn').addEventListener('click', async ()=>{
-  if(busy || S.deal<3)return; busy=true; S.deal=0; updateHUD(); sfx('deal');
-  showBanner('🤝','Trade deal!','Tariffs cleared from the board. Ship now to pay nothing extra.', 1100);
+  if(busy || S.deal<4)return; busy=true; S.deal=0; updateHUD(); sfx('deal');
+  showBanner('🤝','Deal signed!','Both leaders and both legislatures agreed to roll back tariffs. Ship now to pay nothing extra.', 1500);
   const gcells=[]; for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const t=S.grid[r][c]; if(t&&t.kind==='gate')gcells.push([r,c]);}
   for(const [r,c] of gcells){ const el=elAt(r,c); if(el)el.classList.add('clearing'); }
   await wait(230);
@@ -767,11 +780,13 @@ function updateHUD(){
   bar.style.background = pct>=70?'var(--good)':pct>=40?'var(--gold)':'var(--bad)';
   document.getElementById('afford-pct').textContent=pct+'%';
   document.getElementById('afford-note').textContent = S.extra>0 ? ('$'+S.extra+' lost to tariffs') : 'No tariff cost yet';
-  const db=document.getElementById('dealbtn'); const ready=S.deal>=3;
+  const db=document.getElementById('dealbtn'); const ready=S.deal>=4;
+  document.querySelectorAll('#deal-seats .seat').forEach((s,idx)=>s.classList.toggle('on', idx<S.deal));
   db.disabled=!ready; db.classList.toggle('ready',ready);
-  db.textContent = ready ? '🤝 Clear all tariffs!' : '🤝 Bank a deal to clear tariffs';
-  document.getElementById('deal-fill').style.width=Math.min(100,(S.deal/3)*100)+'%';
-  document.getElementById('deal-note').textContent = ready?'Ready. Tap to wipe every tariff gate.':'Charge '+S.deal+'/3 by clearing gates and matching 4+.';
+  db.textContent = ready ? '🤝 Sign the US-Canada deal' : 'Build support for a deal';
+  document.getElementById('deal-note').textContent = ready
+    ? 'Everyone is on board. Sign the deal to roll back every tariff.'
+    : 'A deal needs both leaders and both legislatures on board. Clear tariffs and make big matches to win their support.';
 }
 function renderCart(){
   const host=document.getElementById('cart-items');
@@ -940,9 +955,9 @@ const TUT=[
  {ct:'Watch out', title:'Clear the tariff gates',
   vis:()=> gateHTML(25)+'<span class="arrow">=</span><span class="cartex">🎄 Tree $60 <span class="sur">+$9 tariff</span></span>',
   text:"Striped tariff tiles can't be swapped. While any sit on the board, every good you ship gets a surcharge added to its price. Clear a gate by making a match right next to it."},
- {ct:'Your edge', title:'Bank a Trade Deal',
-  vis:()=> '<span style="font-size:1.3rem;font-weight:800;color:var(--green);font-family:var(--disp)">🤝 Trade Deal</span>',
-  text:"Clearing gates and matching 4 or more charges your Trade Deal. Spend it to wipe every tariff at once. Ship your goal and keep the affordability meter high to win the level."},
+ {ct:'Your edge', title:'Reach a Trade Deal',
+  vis:()=> '<span class="flagline">🇺🇸 🇨🇦 🏛️ 🤝</span>',
+  text:"Clearing tariffs and making big matches wins support from both leaders, Congress and Parliament. When all four are on board, sign the deal to wipe every tariff on the board at once."},
 ];
 let tutIdx=0, tutThenStart=false;
 function openTutorial(thenStart){ tutThenStart=thenStart; tutIdx=0; renderTut(); }

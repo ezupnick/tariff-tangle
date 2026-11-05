@@ -1,6 +1,6 @@
 # Tariff Crush: Sourced Fact Sheet
 
-Research compiled November 5, 2026, for the Canadian American Business Council holiday game. Every figure below is tied to a source. This is nonpartisan reference material: facts and attributed estimates only.
+Research compiled November 5, 2026, for the Canadian American Business Council holiday game. Every figure below is tied to a source. This is neutral reference material: facts and attributed estimates only.
 
 ## How to read this sheet
 
@@ -54,7 +54,7 @@ Use a range with attribution. Never use the old $3,800 or $4,900 numbers as curr
   - Tax Foundation: about $1,000 for 2025, revised toward roughly $820 for 2026 after the Feb 2026 Supreme Court ruling. Confidence: High (clearly labeled modeled national average).
   - Peterson Institute: about $1,200/year at current tariff levels. Confidence: Medium-High.
 - **Suggested game headline:** "Economists estimate tariffs cost the average US household around $1,000 to $1,800 a year" with a footnote naming the three sources and the year. These are modeled national averages, not any one family's bill, worth saying.
-- **Prices do not fall back when tariffs ease.** PIIE's point: 2026 prices still reflect the higher tariffs that prevailed before the Feb 2026 Supreme Court decision. Strong, nonpartisan teaching beat. Confidence: Medium.
+- **Prices do not fall back when tariffs ease.** PIIE's point: 2026 prices still reflect the higher tariffs that prevailed before the Feb 2026 Supreme Court decision. Strong teaching beat. Confidence: Medium.
 
 ---
 
@@ -107,7 +107,7 @@ Rule: whenever the game shows a surcharge, footnote the source and the year, and
 
 ---
 
-## 6. Honest-framing guardrails (keep it nonpartisan and accurate)
+## 6. Framing guardrails (keep it neutral and accurate)
 
 - Tariff gates are a neutral "customs surcharge" obstacle. Never tie them to a party or a leader. Avoid the Carney/Trump political quotes except as neutral "talks are ongoing" context.
 - Attribute to institutions: USTR, CBP, USDA, EIA, CRS, Yale Budget Lab, Tax Foundation, Peterson Institute, Anderson Economic Group, Statistics Canada, Bank of Canada.

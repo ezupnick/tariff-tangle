@@ -4,7 +4,7 @@ A US-Canada holiday trade game, built for the Canadian American Business Council
 
 Tariff Tangle is a festive match-and-build puzzle that shows, through play, how deeply the US and
 Canadian economies share the holidays, and how tariffs flow into the prices families and businesses pay.
-It is nonpartisan and fact-based.
+It is fact-based.
 
 ## Play it
 
@@ -27,11 +27,11 @@ root. Rename nothing: `index.html` is the entry point.
 
 Three levels carry the season from Thanksgiving through Christmas to New Year's.
 
-## Nonpartisan framing
+## Framing
 
-Tariffs are a neutral board obstacle, never tied to a party or a leader. The win state is a durable
-US-Canada deal and lower, more certain prices for both countries. In-game prices are illustrative and
-scaled; the sourced facts appear on each level's receipt.
+Tariffs are a game obstacle, and the win state is a durable US-Canada deal with lower, more certain
+prices for both countries. In-game prices are illustrative and scaled; the sourced facts appear on each
+level's receipt.
 
 ## The numbers
 

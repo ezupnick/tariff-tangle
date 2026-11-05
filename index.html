@@ -401,7 +401,7 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
             <span class="seat"><span class="ico">🇨🇦</span><small>Parliament</small></span>
           </div>
           <button class="dealbtn" id="dealbtn" disabled>Build support for a deal</button>
-          <small id="deal-note">A deal needs both leaders and both legislatures on board. Clear tariffs and make big matches to win their support.</small>
+          <small id="deal-note">Clear tariffs and make big matches to bring politicians in the U.S. and Canada on board with a trade deal.</small>
         </div>
         <div class="card widget cart">
           <h3>Holiday Cart</h3>
@@ -786,7 +786,7 @@ function updateHUD(){
   db.textContent = ready ? '🤝 Sign the US-Canada deal' : 'Build support for a deal';
   document.getElementById('deal-note').textContent = ready
     ? 'Everyone is on board. Sign the deal to roll back every tariff.'
-    : 'A deal needs both leaders and both legislatures on board. Clear tariffs and make big matches to win their support.';
+    : 'Clear tariffs and make big matches to bring politicians in the U.S. and Canada on board with a trade deal.';
 }
 function renderCart(){
   const host=document.getElementById('cart-items');

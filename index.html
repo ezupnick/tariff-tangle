@@ -221,9 +221,11 @@ button{font-family:var(--disp);cursor:pointer}
 /* ---------- toast ---------- */
 .toastwrap{position:fixed;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));
   display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;z-index:40;padding:0 14px}
-.toast{background:var(--fg);color:var(--bg);border-radius:12px;padding:10px 15px;font-size:.84rem;font-weight:600;
-  box-shadow:0 10px 30px rgba(0,0,0,.3);max-width:440px;text-align:center;animation:toastin .3s ease}
+.toast{background:var(--fg);color:var(--bg);border-radius:12px;padding:12px 18px;font-size:.94rem;font-weight:600;
+  box-shadow:0 10px 30px rgba(0,0,0,.3);max-width:480px;text-align:center;animation:toastin .3s ease}
 .toast b{color:var(--gold)}
+.toast.big{font-size:1.08rem;line-height:1.5;padding:17px 22px;max-width:580px;border:2px solid var(--gold)}
+.toast.big b{display:block;margin-bottom:3px;font-size:1.12rem}
 @keyframes toastin{from{transform:translateY(16px);opacity:0}}
 
 /* ---------- banner (level intro / deal) ---------- */
@@ -364,7 +366,7 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
       <div class="step s2"><div class="ic">🚚</div><span class="t">Ship for points</span>
         <p>Finish a good and it ships to your Holiday Cart with a price tag. Fill the shopping list before you run out of moves.</p></div>
       <div class="step s3"><div class="ic">🛃</div><span class="t">Clear the tariffs</span>
-        <p>Striped tariff gates add a surcharge to anything you ship. Match next to them, or reach a US-Canada trade deal to wipe them all.</p></div>
+        <p>Striped tariff gates can't be matched or moved, and they tax everything you ship. The only way to clear them is to reach a US-Canada trade deal.</p></div>
     </div>
     <p class="fineprint">Fact-based. The goods, routes and price effects are drawn from sources
       like the USDA, EIA, USTR, Statistics Canada, the Yale Budget Lab and the Tax Foundation. In-game prices are
@@ -402,7 +404,7 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
             <span class="seat"><span class="ico">🇨🇦</span><small>Parliament</small></span>
           </div>
           <button class="dealbtn" id="dealbtn" disabled>Build support for a deal</button>
-          <small id="deal-note">Clear tariffs and make big matches to bring politicians in the U.S. and Canada on board with a trade deal.</small>
+          <small id="deal-note">Ship goods and make big matches to bring politicians in the U.S. and Canada on board with a trade deal.</small>
         </div>
         <div class="card widget cart">
           <h3>Holiday Cart</h3>
@@ -417,8 +419,8 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
           <h3>Legend</h3>
           <div class="legend">
             <b>•</b> raw material &nbsp; <b>••</b> part &nbsp; <b>•••</b> finished.<br>
-            Build 1→2→3 to ship a finished good. The striped tile is a <b>tariff gate</b>: clear it before you ship
-            to avoid the surcharge.
+            Build 1→2→3 to ship a finished good. The striped tile is a <b>tariff gate</b>: it can't be moved or
+            matched and taxes everything you ship. Only a trade deal clears tariffs.
           </div>
         </div>
       </aside>
@@ -518,11 +520,11 @@ const FAM = {
 
 const LEVELS = [
   {name:"🦃 Thanksgiving Table", fams:["dinner","maple","tree"], moves:22, goal:4,
-   gateStart:2, gateChance:0.06, gateMax:6, budget:120},
+   gateStart:2, gateChance:0.045, gateMax:5, budget:120},
   {name:"🎄 Christmas Morning", fams:["dinner","maple","tree","auto"], moves:24, goal:5,
-   gateStart:3, gateChance:0.09, gateMax:9, budget:260},
+   gateStart:3, gateChance:0.055, gateMax:7, budget:260},
   {name:"🎆 New Year's Eve", fams:["maple","tree","auto","energy","dinner"], moves:26, goal:6,
-   gateStart:4, gateChance:0.11, gateMax:11, budget:420},
+   gateStart:3, gateChance:0.065, gateMax:8, budget:420},
 ];
 
 // ---------- state ----------
@@ -536,7 +538,7 @@ const board = document.getElementById('board');
 
 function freshState(li){
   const L = LEVELS[li];
-  return {li, grid:emptyGrid(), moves:L.moves, score:0, shipped:0, deal:0,
+  return {li, grid:emptyGrid(), moves:L.moves, score:0, shipped:0, deal:0, dealt:false,
     cart:[], base:0, extra:0, factsSeen:{}};
 }
 function emptyGrid(){ const g=[]; for(let r=0;r<ROWS;r++){g.push(new Array(COLS).fill(null));} return g; }
@@ -687,19 +689,10 @@ async function resolveAll(){
     combo++; sfx('pop');
     const cleared=new Set(); const key=(r,c)=>r*COLS+c;
     for(const run of runs) for(const [r,c] of run.cells) cleared.add(key(r,c));
-    const gateCells=[];
-    cleared.forEach(k=>{ const r=(k/COLS)|0, c=k%COLS;
-      for(const [dr,dc] of [[0,1],[0,-1],[1,0],[-1,0]]){ const r2=r+dr,c2=c+dc;
-        if(r2<0||r2>=ROWS||c2<0||c2>=COLS)continue; const t=S.grid[r2][c2];
-        if(t&&t.kind==='gate'&&!gateCells.some(g=>g[0]===r2&&g[1]===c2)) gateCells.push([r2,c2]); } });
     cleared.forEach(k=>{ const r=(k/COLS)|0,c=k%COLS; const el=elAt(r,c); if(el)el.classList.add('clearing'); });
-    for(const [r,c] of gateCells){ const el=elAt(r,c); if(el)el.classList.add('clearing'); }
     await wait(210);
     cleared.forEach(k=>{ const r=(k/COLS)|0,c=k%COLS; const t=S.grid[r][c]; if(t){const el=els.get(t.id); if(el){el.remove();els.delete(t.id);}} });
-    for(const [r,c] of gateCells){ const t=S.grid[r][c]; if(t){const el=els.get(t.id); if(el){el.remove();els.delete(t.id);}} }
     S.score += cleared.size*5*combo;
-    if(gateCells.length) sfx('gate');
-    for(const [r,c] of gateCells){ S.grid[r][c]=null; S.deal=Math.min(4,S.deal+1); S.score+=20; }
     cleared.forEach(k=>{ const r=(k/COLS)|0,c=k%COLS; S.grid[r][c]=null; });
     const usedPivot=new Set();
     for(const run of runs){
@@ -726,7 +719,7 @@ function gravity(){
 }
 function refill(){
   const L=LEVELS[S.li]; const gates=countGates();
-  let budget=Math.max(0,L.gateMax-gates);
+  let budget=S.dealt?0:Math.max(0,L.gateMax-gates);
   for(let c=0;c<COLS;c++)for(let r=0;r<ROWS;r++){ if(S.grid[r][c]===null){
     if(budget>0 && Math.random()<L.gateChance){ S.grid[r][c]=newGate(); budget--; }
     else S.grid[r][c]=newGood(randFam(),1); } }
@@ -738,16 +731,17 @@ function shipProduct(fam, combo){
   const surcharge = (f.exempt||!gated) ? 0 : Math.round(f.price*f.tariff);
   S.cart.push({family:fam, base:f.price, sur:surcharge, exempt:f.exempt});
   S.base+=f.price; S.extra+=surcharge; S.shipped++;
+  S.deal=Math.min(4,S.deal+1);
   S.score += (f.price + 100)*combo;
   if(!S.factsSeen[fam]){ S.factsSeen[fam]=true;
-    toast('<b>'+f.glyph[2]+' '+f.name+' shipped.</b> '+f.fact); }
+    toast('<b>'+f.glyph[2]+' '+f.name+' shipped.</b> '+f.fact, {dur:7000, big:true}); }
   else { toast(f.glyph[2]+' '+f.name+(surcharge?(' shipped. Tariff added $'+surcharge+'.'):' shipped, tariff-free!')); }
 }
 
 // ---------- trade deal ----------
 document.getElementById('dealbtn').addEventListener('click', async ()=>{
-  if(busy || S.deal<4)return; busy=true; S.deal=0; updateHUD(); sfx('deal');
-  showBanner('🤝','Deal signed!','Both leaders and both legislatures agreed to roll back tariffs. Ship now to pay nothing extra.', 1500);
+  if(busy || S.deal<4 || S.dealt)return; busy=true; S.deal=0; S.dealt=true; updateHUD(); sfx('deal');
+  showBanner('🤝','Deal signed!','Both leaders and both legislatures agreed to roll back tariffs. The board stays tariff-free, so ship the rest of your goods at no extra cost.', 1900);
   const gcells=[]; for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const t=S.grid[r][c]; if(t&&t.kind==='gate')gcells.push([r,c]);}
   for(const [r,c] of gcells){ const el=elAt(r,c); if(el)el.classList.add('clearing'); }
   await wait(230);
@@ -781,13 +775,21 @@ function updateHUD(){
   bar.style.background = pct>=70?'var(--good)':pct>=40?'var(--gold)':'var(--bad)';
   document.getElementById('afford-pct').textContent=pct+'%';
   document.getElementById('afford-note').textContent = S.extra>0 ? ('$'+S.extra+' lost to tariffs') : 'No tariff cost yet';
-  const db=document.getElementById('dealbtn'); const ready=S.deal>=4;
-  document.querySelectorAll('#deal-seats .seat').forEach((s,idx)=>s.classList.toggle('on', idx<S.deal));
-  db.disabled=!ready; db.classList.toggle('ready',ready);
-  db.textContent = ready ? '🤝 Sign the US-Canada deal' : 'Build support for a deal';
-  document.getElementById('deal-note').textContent = ready
-    ? 'Everyone is on board. Sign the deal to roll back every tariff.'
-    : 'Clear tariffs and make big matches to bring politicians in the U.S. and Canada on board with a trade deal.';
+  const db=document.getElementById('dealbtn');
+  const seatsEls=document.querySelectorAll('#deal-seats .seat');
+  if(S.dealt){
+    seatsEls.forEach(s=>s.classList.add('on'));
+    db.disabled=true; db.classList.remove('ready'); db.textContent='🤝 Deal signed';
+    document.getElementById('deal-note').textContent='Deal signed. Tariffs stay down for the rest of the level.';
+  } else {
+    const ready=S.deal>=4;
+    seatsEls.forEach((s,idx)=>s.classList.toggle('on', idx<S.deal));
+    db.disabled=!ready; db.classList.toggle('ready',ready);
+    db.textContent = ready ? '🤝 Sign the US-Canada deal' : 'Build support for a deal';
+    document.getElementById('deal-note').textContent = ready
+      ? 'Everyone is on board. Sign the deal to roll back every tariff.'
+      : 'Ship goods and make big matches to bring politicians in the U.S. and Canada on board with a trade deal.';
+  }
 }
 function renderCart(){
   const host=document.getElementById('cart-items');
@@ -808,11 +810,12 @@ function renderCart(){
 }
 
 // ---------- toasts & banner ----------
-function toast(html){
+function toast(html, opts){
+  opts=opts||{};
   const host=document.getElementById('toasts');
-  const t=document.createElement('div'); t.className='toast'; t.innerHTML=html; host.appendChild(t);
-  setTimeout(()=>{ t.style.transition='opacity .4s, transform .4s'; t.style.opacity='0'; t.style.transform='translateY(10px)';
-    setTimeout(()=>t.remove(),420); }, 3200);
+  const t=document.createElement('div'); t.className='toast'+(opts.big?' big':''); t.innerHTML=html; host.appendChild(t);
+  setTimeout(()=>{ t.style.transition='opacity .5s, transform .5s'; t.style.opacity='0'; t.style.transform='translateY(10px)';
+    setTimeout(()=>t.remove(),520); }, opts.dur||3200);
   while(host.children.length>2) host.removeChild(host.firstChild);
 }
 function showBanner(big,title,sub,ms){
@@ -953,12 +956,12 @@ const TUT=[
  {ct:'Why it matters', title:'Every good crosses the border',
   vis:()=> '<span class="flagline">🇨🇦 ➜ 🚗 ➜ 🇺🇸</span>',
   text:"The goods you build are made by both countries together. One car part can cross the US-Canada border four times before assembly. That is the real supply chain you're playing."},
- {ct:'Watch out', title:'Clear the tariff gates',
+ {ct:'Watch out', title:'Tariffs tax everything you ship',
   vis:()=> gateHTML(25)+'<span class="arrow">=</span><span class="cartex">🎄 Tree $60 <span class="sur">+$9 tariff</span></span>',
-  text:"Striped tariff tiles can't be swapped. While any sit on the board, every good you ship gets a surcharge added to its price. Clear a gate by making a match right next to it."},
+  text:"Striped tariff tiles can't be swapped, matched, or cleared by playing. While any sit on the board, every good you ship pays a surcharge. The only way to remove them is to reach a trade deal."},
  {ct:'Your edge', title:'Reach a Trade Deal',
   vis:()=> '<span class="flagline">🇺🇸 🇨🇦 🏛️ 🤝</span>',
-  text:"Clearing tariffs and making big matches wins support from both leaders, Congress and Parliament. When all four are on board, sign the deal to wipe every tariff on the board at once."},
+  text:"Shipping goods and making big matches wins support from both leaders, Congress and Parliament. When all four are on board, sign the deal to clear every tariff at once, the only way tariffs come down."},
 ];
 let tutIdx=0, tutThenStart=false;
 function openTutorial(thenStart){ tutThenStart=thenStart; tutIdx=0; renderTut(); }

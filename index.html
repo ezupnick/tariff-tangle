@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tariff Tangle</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: a one-screen holiday match-3. Festive evergreen ground, warm gold + holiday-red accents,
+   family-colored tiles. Playful rounded display face over a clean humanist body. */
+:root{
+  --bg:#e9eef0; --surface:#ffffff; --surface-2:#f1f6f6; --fg:#15211f; --muted:#5a6a66;
+  --line:#d7e0df; --accent:#c6372f; --gold:#c8902a; --green:#1f7a4d;
+  --good:#1f7a4d; --warn:#c8902a; --bad:#c6372f;
+  --f-dinner:#e39a3a; --f-maple:#cd5a38; --f-tree:#2f8a57; --f-auto:#5f82a0; --f-energy:#e4c23f;
+  --gate:#8c99a1; --shadow:0 6px 20px rgba(14,40,34,.12);
+  --disp:"Baloo 2", ui-rounded, "Segoe UI", system-ui, sans-serif;
+  --body:"Nunito", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0b1512; --surface:#122320; --surface-2:#0e1c19; --fg:#e9f2ef; --muted:#9fb3ad;
+  --line:#23403a; --accent:#e4544b; --gold:#e3b357; --green:#3fae76;
+  --good:#3fae76; --warn:#e3b357; --bad:#e4544b;
+  --gate:#6f7d84; --shadow:0 8px 24px rgba(0,0,0,.4); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0b1512; --surface:#122320; --surface-2:#0e1c19; --fg:#e9f2ef; --muted:#9fb3ad;
+  --line:#23403a; --accent:#e4544b; --gold:#e3b357; --green:#3fae76;
+  --good:#3fae76; --warn:#e3b357; --bad:#e4544b;
+  --gate:#6f7d84; --shadow:0 8px 24px rgba(0,0,0,.4); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);margin:0;line-height:1.5;
+  -webkit-text-size-adjust:100%;}
+.wrap{min-height:100%;display:flex;flex-direction:column;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:14px;max-width:1040px;margin:0 auto;width:100%;}
+h1,h2,h3{font-family:var(--disp);font-weight:700;margin:0;text-wrap:balance;line-height:1.1}
+a{color:var(--accent)}
+button{font-family:var(--disp);cursor:pointer}
+.eyebrow{font-family:var(--disp);font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  font-size:.72rem;color:var(--gold)}
+
+/* ---------- top bar ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand .logo{font-size:1.5rem;line-height:1}
+.brand h1{font-size:1.35rem;letter-spacing:-.01em}
+.brand .sub{font-size:.74rem;color:var(--muted);font-family:var(--body);font-weight:600}
+.iconbtn{background:var(--surface);border:1px solid var(--line);color:var(--fg);border-radius:10px;
+  width:38px;height:38px;font-size:1rem;display:grid;place-items:center;box-shadow:var(--shadow)}
+
+/* ---------- panels ---------- */
+.screen{background:transparent}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+
+/* ---------- start / receipt ---------- */
+.hero{padding:26px 22px;display:flex;flex-direction:column;gap:16px}
+.hero .lede{font-size:1.02rem;color:var(--muted);max-width:60ch}
+.hero h2{font-size:1.9rem;letter-spacing:-.02em}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.how .step{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:13px 14px}
+.how .step .t{font-family:var(--disp);font-weight:700;font-size:.98rem;display:flex;gap:8px;align-items:center}
+.how .step p{margin:.35rem 0 0;font-size:.86rem;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:12px;
+  padding:13px 22px;font-size:1.02rem;font-weight:700;background:var(--accent);color:#fff;
+  box-shadow:var(--shadow);transition:transform .12s ease, filter .12s ease}
+.btn:hover{filter:brightness(1.06)}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn.ghost{background:var(--surface);color:var(--fg);border:1px solid var(--line)}
+.btn.gold{background:var(--gold);color:#201500}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px}
+.fineprint{font-size:.76rem;color:var(--muted);max-width:66ch}
+
+/* ---------- game layout ---------- */
+.game{display:flex;gap:16px;align-items:flex-start}
+.boardcol{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:10px;align-items:center}
+.side{flex:0 0 288px;display:flex;flex-direction:column;gap:12px}
+@media (max-width:780px){ .game{flex-direction:column} .side{flex:1 1 auto;width:100%} }
+
+.levelbar{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.levelbar .nm{font-family:var(--disp);font-weight:700;font-size:1.05rem;display:flex;gap:8px;align-items:center}
+.goalpill{font-family:var(--disp);font-weight:700;font-size:.8rem;background:var(--surface);border:1px solid var(--line);
+  border-radius:999px;padding:5px 11px;box-shadow:var(--shadow)}
+
+.boardwrap{width:100%;display:flex;justify-content:center}
+.board{position:relative;background:var(--surface-2);border:1px solid var(--line);border-radius:16px;
+  box-shadow:var(--shadow);touch-action:none;--cell:46px}
+.tile{position:absolute;width:var(--cell);height:var(--cell);top:0;left:0;will-change:transform;
+  transition:transform .26s cubic-bezier(.2,.75,.3,1);padding:3px}
+.face{width:100%;height:100%;border-radius:12px;display:grid;place-items:center;position:relative;
+  font-size:calc(var(--cell) * .5);box-shadow:inset 0 -3px 0 rgba(0,0,0,.14), inset 0 2px 0 rgba(255,255,255,.22);
+  user-select:none;transition:transform .14s ease, box-shadow .14s ease;overflow:hidden}
+.tile[data-family=dinner] .face{background:var(--f-dinner)}
+.tile[data-family=maple] .face{background:var(--f-maple)}
+.tile[data-family=tree] .face{background:var(--f-tree)}
+.tile[data-family=auto] .face{background:var(--f-auto)}
+.tile[data-family=energy] .face{background:var(--f-energy)}
+.tile[data-tier="2"] .face{filter:saturate(1.15) brightness(.97)}
+.tile[data-tier="3"] .face{filter:saturate(1.3) brightness(.9)}
+.tile .dots{position:absolute;bottom:3px;left:0;right:0;display:flex;gap:2px;justify-content:center}
+.tile .dots i{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.85);
+  box-shadow:0 0 0 1px rgba(0,0,0,.18)}
+.tile .ring{position:absolute;top:2px;right:3px;font-size:calc(var(--cell)*.2);font-family:var(--disp);
+  font-weight:700;color:rgba(255,255,255,.92);text-shadow:0 1px 1px rgba(0,0,0,.3)}
+.tile.sel .face{transform:scale(.9);box-shadow:0 0 0 3px var(--gold), inset 0 -3px 0 rgba(0,0,0,.14)}
+.tile.bad .face{animation:shake .3s}
+.tile[data-kind=gate] .face{background:repeating-linear-gradient(45deg,var(--gate),var(--gate) 7px,#77848b 7px,#77848b 14px);
+  color:#fff;font-size:calc(var(--cell)*.22);font-family:var(--disp);font-weight:800;flex-direction:column;gap:1px;
+  text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.tile[data-kind=gate] .face .lab{font-size:calc(var(--cell)*.15);letter-spacing:.04em;opacity:.95}
+.tile.fresh .face{animation:popin .28s cubic-bezier(.2,.9,.3,1.3)}
+.tile.clearing{z-index:4}
+.tile.clearing .face{animation:popout .22s forwards}
+.tile.ship .face{animation:ship .4s forwards}
+@keyframes popin{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes popout{to{transform:scale(0) rotate(14deg);opacity:0}}
+@keyframes ship{40%{transform:scale(1.18)}to{transform:scale(0) translateY(-30px);opacity:0}}
+@keyframes shake{25%{transform:translateX(-4px)}50%{transform:translateX(4px)}75%{transform:translateX(-3px)}}
+
+/* ---------- side widgets ---------- */
+.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 8px;text-align:center;box-shadow:var(--shadow)}
+.stat .v{font-family:var(--disp);font-weight:800;font-size:1.15rem;font-variant-numeric:tabular-nums}
+.stat .k{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.stat.low .v{color:var(--bad)}
+
+.widget{padding:12px 13px}
+.widget h3{font-size:.82rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
+.afford .barwrap{height:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.afford .bar{height:100%;width:100%;border-radius:999px;background:var(--good);transition:width .4s ease, background .4s ease}
+.afford .row{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px}
+.afford .pct{font-family:var(--disp);font-weight:800;font-variant-numeric:tabular-nums}
+.afford small{font-size:.72rem;color:var(--muted)}
+
+.deal{display:flex;flex-direction:column;gap:8px}
+.deal .dealbtn{border:1px solid var(--line);background:var(--surface-2);color:var(--muted);border-radius:12px;
+  padding:11px 12px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;font-size:.92rem;
+  transition:all .15s ease}
+.deal .dealbtn.ready{background:linear-gradient(100deg,var(--green),#2bbf78);color:#06251a;border-color:transparent;
+  box-shadow:var(--shadow);animation:glow 1.6s ease-in-out infinite}
+@keyframes glow{50%{filter:brightness(1.1)}}
+.deal .chg{height:7px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.deal .chg i{display:block;height:100%;background:var(--gold);width:0%;transition:width .3s ease}
+.deal small{font-size:.72rem;color:var(--muted)}
+
+.cart{display:flex;flex-direction:column}
+.cart .items{max-height:188px;overflow:auto;display:flex;flex-direction:column;gap:6px;margin:-2px -2px 8px;padding:2px}
+.cart .empty{font-size:.82rem;color:var(--muted);padding:10px 2px}
+.citem{display:flex;align-items:center;gap:9px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:7px 9px}
+.citem .em{font-size:1.05rem}
+.citem .nm{flex:1;min-width:0;font-size:.82rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.citem .pr{text-align:right;font-variant-numeric:tabular-nums;font-size:.8rem}
+.citem .pr .base{font-weight:800}
+.citem .pr .sur{display:block;font-size:.68rem;color:var(--bad);font-weight:700}
+.citem .pr .free{display:block;font-size:.66rem;color:var(--good);font-weight:700}
+.cart .tot{border-top:1px dashed var(--line);padding-top:8px;display:flex;flex-direction:column;gap:3px;font-size:.84rem}
+.cart .tot .r{display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
+.cart .tot .r.extra{color:var(--bad);font-weight:700}
+.cart .tot .r.grand{font-family:var(--disp);font-weight:800;font-size:1rem}
+
+.legend{font-size:.76rem;color:var(--muted);line-height:1.45}
+.legend b{color:var(--fg)}
+
+/* ---------- toast ---------- */
+.toastwrap{position:fixed;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));
+  display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;z-index:40;padding:0 14px}
+.toast{background:var(--fg);color:var(--bg);border-radius:12px;padding:10px 15px;font-size:.84rem;font-weight:600;
+  box-shadow:0 10px 30px rgba(0,0,0,.3);max-width:440px;text-align:center;animation:toastin .3s ease}
+.toast b{color:var(--gold)}
+@keyframes toastin{from{transform:translateY(16px);opacity:0}}
+
+/* ---------- banner (level intro / deal) ---------- */
+.banner{position:fixed;inset:0;display:grid;place-items:center;z-index:50;background:rgba(6,16,13,.55);
+  padding:20px;animation:fade .25s ease}
+.banner .box{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);
+  padding:24px 22px;max-width:380px;text-align:center;display:flex;flex-direction:column;gap:12px;animation:popin .32s}
+.banner .box .big{font-size:2.4rem}
+.banner .box h2{font-size:1.5rem}
+@keyframes fade{from{opacity:0}}
+
+/* ---------- receipt ---------- */
+.receipt{padding:22px;display:flex;flex-direction:column;gap:16px}
+.grade{display:flex;align-items:center;gap:14px}
+.grade .big{font-family:var(--disp);font-weight:800;font-size:3rem;line-height:1;width:74px;height:74px;border-radius:18px;
+  display:grid;place-items:center;color:#fff;box-shadow:var(--shadow)}
+.compare{display:flex;flex-direction:column;gap:9px}
+.cbar{display:flex;align-items:center;gap:10px}
+.cbar .lab{width:92px;font-size:.78rem;font-weight:700;color:var(--muted)}
+.cbar .track{flex:1;height:26px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;overflow:hidden;position:relative}
+.cbar .fill{height:100%;display:flex;align-items:center;padding-left:9px;font-size:.8rem;font-weight:800;color:#fff;
+  font-variant-numeric:tabular-nums;border-radius:7px 0 0 7px;transition:width .6s cubic-bezier(.2,.8,.3,1)}
+.factlist{display:flex;flex-direction:column;gap:7px}
+.factlist .f{display:flex;gap:9px;align-items:flex-start;font-size:.84rem;background:var(--surface-2);
+  border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.factlist .f .em{font-size:1.1rem}
+.srcnote{font-size:.74rem;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+details.src summary{cursor:pointer;font-weight:700;color:var(--fg);font-size:.78rem}
+details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--muted);line-height:1.5}
+
+/* ---------- tutorial ---------- */
+.tut-ov{position:fixed;inset:0;z-index:60;background:rgba(6,16,13,.62);display:grid;place-items:center;
+  padding:18px;animation:fade .25s ease}
+.tut{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);
+  max-width:440px;width:100%;max-height:92vh;overflow:auto;display:flex;flex-direction:column;animation:popin .3s}
+.tut .vis{background:var(--surface-2);border-bottom:1px solid var(--line);padding:24px 16px;display:flex;
+  align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;min-height:116px;--cell:52px}
+.tut .body{padding:18px 20px 14px;display:flex;flex-direction:column;gap:7px}
+.tut .step-ct{font-family:var(--disp);font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  font-size:.68rem;color:var(--gold)}
+.tut h2{font-size:1.3rem}
+.tut p{margin:0;color:var(--muted);font-size:.94rem;line-height:1.5}
+.tut .nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 18px 18px}
+.tut .dots2{display:flex;gap:6px}
+.tut .dots2 i{width:7px;height:7px;border-radius:50%;background:var(--line);transition:all .2s}
+.tut .dots2 i.on{background:var(--accent);transform:scale(1.2)}
+.tut .skip{background:none;border:none;color:var(--muted);font-size:.8rem;cursor:pointer;
+  font-family:var(--body);text-decoration:underline;padding:6px 0}
+.tile.static{position:static;display:inline-flex}
+.tut .arrow{font-size:1.5rem;color:var(--muted)}
+.tut .cartex{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line);
+  border-radius:10px;padding:8px 10px;font-size:.82rem;font-weight:700}
+.tut .cartex .sur{color:var(--bad)}
+.tut .flagline{font-size:1.9rem;display:flex;align-items:center;gap:8px}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001s!important;transition-duration:.001s!important}
+}
+</style>
+<style>
+  html,body{margin:0}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">🎁</span>
+      <div style="min-width:0">
+        <h1>Tariff Tangle</h1>
+        <div class="sub">A US-Canada holiday trade game</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="iconbtn" id="help" title="How to play" aria-label="How to play">?</button>
+      <button class="iconbtn" id="theme" title="Switch light / dark" aria-label="Switch theme">◐</button>
+    </div>
+  </div>
+
+  <!-- START -->
+  <section class="screen" id="screen-start">
+    <div class="card hero">
+      <span class="eyebrow">Canadian American Business Council</span>
+      <h2>Stock the holidays. Beat the tariffs.</h2>
+      <p class="lede">Match raw materials to build them into finished holiday goods, then ship them to your cart.
+        Every good is a team effort between Canada and the US. Tariff gates make everything cost more, so clear
+        them to keep your holidays affordable.</p>
+      <div class="how">
+        <div class="step"><div class="t">🔗 Match to build</div><p>Match 3 of the same tile. Raw materials become
+          parts, parts become a finished gift. That path is the real supply chain.</p></div>
+        <div class="step"><div class="t">🚚 Ship for points</div><p>Finish a good and it ships to your Holiday Cart
+          with a price tag. Fill the shopping list before you run out of moves.</p></div>
+        <div class="step"><div class="t">🛃 Clear the tariffs</div><p>Striped tariff gates add a surcharge to anything
+          you ship. Match next to them to clear them, or bank a Trade Deal to wipe them all.</p></div>
+      </div>
+      <div class="btnrow">
+        <button class="btn" id="play">Start the season</button>
+      </div>
+      <p class="fineprint">Nonpartisan and fact-based. The goods, routes and price effects are drawn from sources
+        like the USDA, EIA, USTR, Statistics Canada, the Yale Budget Lab and the Tax Foundation. In-game prices are
+        illustrative; the real figures appear on your end-of-level receipt.</p>
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section class="screen" id="screen-game" hidden>
+    <div class="game">
+      <div class="boardcol">
+        <div class="levelbar">
+          <span class="nm" id="lvl-name">🦃 Thanksgiving Table</span>
+          <span class="goalpill" id="lvl-goal">Shipped 0 / 4</span>
+        </div>
+        <div class="boardwrap"><div class="board" id="board" aria-label="Game board"></div></div>
+      </div>
+      <aside class="side">
+        <div class="stat3">
+          <div class="stat" id="st-moves"><div class="v">22</div><div class="k">Moves</div></div>
+          <div class="stat"><div class="v" id="st-score">0</div><div class="k">Score</div></div>
+          <div class="stat"><div class="v" id="st-ship">0</div><div class="k">Shipped</div></div>
+        </div>
+        <div class="card widget afford">
+          <h3>Affordability</h3>
+          <div class="barwrap"><div class="bar" id="afford-bar"></div></div>
+          <div class="row"><span class="pct" id="afford-pct">100%</span>
+            <small id="afford-note">No tariff cost yet</small></div>
+        </div>
+        <div class="card widget deal">
+          <h3 style="margin-bottom:2px">Trade Deal</h3>
+          <button class="dealbtn" id="dealbtn" disabled>🤝 Bank a deal to clear tariffs</button>
+          <div class="chg"><i id="deal-fill"></i></div>
+          <small id="deal-note">Charge by clearing gates and making big matches.</small>
+        </div>
+        <div class="card widget cart">
+          <h3>Holiday Cart</h3>
+          <div class="items" id="cart-items"><div class="empty">Nothing shipped yet. Build a good and ship it.</div></div>
+          <div class="tot" id="cart-tot" hidden>
+            <div class="r"><span>Base cost</span><span id="tot-base">$0</span></div>
+            <div class="r extra"><span>Tariff surcharge</span><span id="tot-extra">+$0</span></div>
+            <div class="r grand"><span>You paid</span><span id="tot-grand">$0</span></div>
+          </div>
+        </div>
+        <div class="card widget">
+          <h3>Legend</h3>
+          <div class="legend">
+            <b>•</b> raw material &nbsp; <b>••</b> part &nbsp; <b>•••</b> finished.<br>
+            Build 1→2→3 to ship a finished good. The striped tile is a <b>tariff gate</b>: clear it before you ship
+            to avoid the surcharge.
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- RECEIPT -->
+  <section class="screen" id="screen-receipt" hidden>
+    <div class="card receipt">
+      <span class="eyebrow" id="r-eyebrow">Level complete</span>
+      <h2 id="r-title">Your holiday receipt</h2>
+      <div class="grade">
+        <div class="big" id="r-grade">A</div>
+        <div><div style="font-family:var(--disp);font-weight:800;font-size:1.1rem" id="r-gradeline">Smart shopping!</div>
+          <div style="color:var(--muted);font-size:.86rem" id="r-gradesub"></div></div>
+      </div>
+      <div class="compare">
+        <div class="cbar"><span class="lab">With a deal</span><div class="track"><div class="fill" id="bar-base"
+          style="background:var(--good)">$0</div></div></div>
+        <div class="cbar"><span class="lab">What you paid</span><div class="track"><div class="fill" id="bar-paid"
+          style="background:var(--bad)">$0</div></div></div>
+      </div>
+      <p id="r-takeaway" style="font-size:.95rem;margin:0"></p>
+      <div class="factlist" id="r-facts"></div>
+      <div class="srcnote">
+        <details class="src"><summary>About the numbers (sources)</summary>
+          <ul>
+            <li>Household tariff cost ~$1,000–$1,800/yr: Tax Foundation, Yale Budget Lab, Peterson Institute (2025–26).</li>
+            <li>A car part crossing the border 4 times: NBC News. ~50% US content in Canadian-built cars: USTR.</li>
+            <li>Canada ~73% of world maple syrup: Agriculture and Agri-Food Canada. ~86% of US frozen fries: USDA.</li>
+            <li>Canada ~60% of US oil imports and direct power to the Northeast: EIA. Energy is currently tariff-exempt.</li>
+            <li>In-game prices and surcharges are illustrative, scaled from these real ranges.</li>
+          </ul>
+        </details>
+      </div>
+      <div class="btnrow">
+        <button class="btn" id="r-next">Next level</button>
+        <button class="btn ghost" id="r-replay">Replay level</button>
+      </div>
+    </div>
+  </section>
+
+  <p class="fineprint" style="text-align:center;margin:16px auto 4px">Built for the CABC to show how
+    deeply the US and Canadian economies share the holidays. Play it, then let's talk about the next build.</p>
+</div>
+
+<div class="toastwrap" id="toasts" aria-live="polite"></div>
+<div id="banner-host"></div>
+
+<script>
+(function(){
+"use strict";
+const COLS=7, ROWS=7;
+
+const FAM = {
+  dinner:{name:"Holiday Dinner", glyph:["🌾","🦃","🍽️"], tname:["Grain","Turkey","Dinner"],
+    price:85, tariff:0.08, exempt:false,
+    fact:"Canada supplies about 86% of US frozen fries and is the #2 US farm market. (USDA)"},
+  maple:{name:"Maple & Baking", glyph:["🍁","🍯","🍪"], tname:["Sap","Syrup","Cookies"],
+    price:22, tariff:0.08, exempt:false,
+    fact:"Canada makes about 73% of the world's maple syrup, nearly all of it from Quebec. (Agriculture Canada)"},
+  tree:{name:"Tree & Trimmings", glyph:["🌲","🪵","🎄"], tname:["Sapling","Lumber","Tree"],
+    price:60, tariff:0.15, exempt:false,
+    fact:"Canada sends the US most of its fresh Christmas trees, and softwood lumber carries roughly a 35% duty. (StatCan)"},
+  auto:{name:"Car Under the Tree", glyph:["🔩","⚙️","🚗"], tname:["Metal","Parts","Car"],
+    price:480, tariff:0.22, exempt:false,
+    fact:"One auto part can cross the US-Canada border 4 times before assembly; a US-built car is about 50% US content. (NBC, USTR)"},
+  energy:{name:"Holiday Lights", glyph:["🛢️","🔌","💡"], tname:["Fuel","Power","Lights"],
+    price:40, tariff:0.0, exempt:true,
+    fact:"Canada supplies about 60% of US oil imports and powers the Northeast grid, with no tariff on energy today. (EIA)"},
+};
+
+const LEVELS = [
+  {name:"🦃 Thanksgiving Table", fams:["dinner","maple","tree"], moves:22, goal:4,
+   gateStart:2, gateChance:0.06, gateMax:6, budget:120},
+  {name:"🎄 Christmas Morning", fams:["dinner","maple","tree","auto"], moves:24, goal:5,
+   gateStart:3, gateChance:0.09, gateMax:9, budget:260},
+  {name:"🎆 New Year's Eve", fams:["maple","tree","auto","energy","dinner"], moves:26, goal:6,
+   gateStart:4, gateChance:0.11, gateMax:11, budget:420},
+];
+
+// ---------- state ----------
+let S = null;
+let uid = 1;
+let busy = false;
+let sel = null; // {r,c}
+const els = new Map(); // id -> element
+const board = document.getElementById('board');
+
+function freshState(li){
+  const L = LEVELS[li];
+  return {li, grid:emptyGrid(), moves:L.moves, score:0, shipped:0, deal:0,
+    cart:[], base:0, extra:0, factsSeen:{}};
+}
+function emptyGrid(){ const g=[]; for(let r=0;r<ROWS;r++){g.push(new Array(COLS).fill(null));} return g; }
+
+function newGood(fam, tier){ return {id:uid++, kind:'good', family:fam, tier:tier}; }
+function newGate(){ const pcts=[10,15,25,50]; return {id:uid++, kind:'gate', pct:pcts[(Math.random()*pcts.length)|0]}; }
+
+function randFam(){ const f=LEVELS[S.li].fams; return f[(Math.random()*f.length)|0]; }
+
+function buildBoard(){
+  const L=LEVELS[S.li];
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++) S.grid[r][c]=newGood(randFam(),1);
+  // remove any starting matches
+  let guard=0;
+  while(findRuns().length && guard++<400){
+    for(const run of findRuns()) for(const [r,c] of run.cells) S.grid[r][c]=newGood(randFam(),1);
+  }
+  // sprinkle gates
+  let placed=0, g2=0;
+  while(placed<L.gateStart && g2++<300){
+    const r=(Math.random()*ROWS)|0, c=(Math.random()*COLS)|0;
+    if(S.grid[r][c] && S.grid[r][c].kind==='good'){ S.grid[r][c]=newGate(); placed++; }
+  }
+}
+
+// ---------- matching ----------
+function findRuns(){
+  const runs=[];
+  for(let r=0;r<ROWS;r++){ let c=0; while(c<COLS){ const t=S.grid[r][c];
+    if(t&&t.kind==='good'){ let c2=c+1; while(c2<COLS){ const n=S.grid[r][c2];
+      if(n&&n.kind==='good'&&n.family===t.family&&n.tier===t.tier)c2++; else break; }
+      if(c2-c>=3){ const cells=[]; for(let k=c;k<c2;k++)cells.push([r,k]);
+        runs.push({cells,family:t.family,tier:t.tier}); } c=c2; } else c++; } }
+  for(let c=0;c<COLS;c++){ let r=0; while(r<ROWS){ const t=S.grid[r][c];
+    if(t&&t.kind==='good'){ let r2=r+1; while(r2<ROWS){ const n=S.grid[r2][c];
+      if(n&&n.kind==='good'&&n.family===t.family&&n.tier===t.tier)r2++; else break; }
+      if(r2-r>=3){ const cells=[]; for(let k=r;k<r2;k++)cells.push([k,c]);
+        runs.push({cells,family:t.family,tier:t.tier}); } r=r2; } else r++; } }
+  return runs;
+}
+function hasMove(){
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    for(const [dr,dc] of [[0,1],[1,0]]){ const r2=r+dr,c2=c+dc; if(r2>=ROWS||c2>=COLS)continue;
+      swapData(r,c,r2,c2); const m=findRuns().length>0; swapData(r,c,r2,c2); if(m)return true; } }
+  return false;
+}
+function swapData(r,c,r2,c2){ const t=S.grid[r][c]; S.grid[r][c]=S.grid[r2][c2]; S.grid[r2][c2]=t; }
+
+// ---------- rendering ----------
+function makeEl(t){
+  const el=document.createElement('div'); el.className='tile fresh'; el.dataset.id=t.id;
+  const face=document.createElement('div'); face.className='face';
+  if(t.kind==='gate'){ el.dataset.kind='gate';
+    face.innerHTML='<span>'+t.pct+'%</span><span class="lab">TARIFF</span>'; }
+  else { el.dataset.kind='good'; el.dataset.family=t.family; el.dataset.tier=t.tier;
+    const g=document.createElement('span'); g.textContent=FAM[t.family].glyph[t.tier-1]; face.appendChild(g);
+    const dots=document.createElement('span'); dots.className='dots';
+    for(let i=0;i<t.tier;i++){const d=document.createElement('i'); dots.appendChild(d);} face.appendChild(dots); }
+  el.appendChild(face);
+  el.addEventListener('transitionend',()=>{el.classList.remove('fresh');},{once:false});
+  setTimeout(()=>el.classList.remove('fresh'),320);
+  return el;
+}
+function cellPx(){ return parseFloat(getComputedStyle(board).getPropertyValue('--cell')); }
+
+function render(){
+  const cell=cellPx();
+  const present=new Set();
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){ const t=S.grid[r][c]; if(!t)continue; present.add(t.id);
+    let el=els.get(t.id); const x=c*cell, y=r*cell;
+    if(!el){ el=makeEl(t); els.set(t.id,el); board.appendChild(el);
+      el.style.transform='translate('+x+'px,'+(y-cell*(r+2))+'px)'; el._new=true; }
+    el._x=x; el._y=y;
+    // keep tier/glyph in sync for promoted-in-place (new id always, so fine)
+  }
+  // drop selection class
+  requestAnimationFrame(()=>{ els.forEach(el=>{ el.style.transform='translate('+el._x+'px,'+el._y+'px)'; el._new=false; }); });
+  // remove orphan elements not in grid and not mid-clear
+  els.forEach((el,id)=>{ if(!present.has(id) && !el.classList.contains('clearing') && !el.classList.contains('ship')){
+    el.remove(); els.delete(id);} });
+}
+
+function sizeBoard(){
+  const col=document.querySelector('.boardcol'); if(!col)return;
+  const avail=col.clientWidth;
+  const byH=window.innerHeight-230;
+  let size=Math.min(avail, 462, Math.max(byH, 252));
+  size=Math.max(size, 238);
+  const cell=Math.floor(size/COLS);
+  board.style.setProperty('--cell', cell+'px');
+  board.style.width=(cell*COLS)+'px'; board.style.height=(cell*ROWS)+'px';
+  if(S) render();
+}
+
+// ---------- input ----------
+let down=null;
+board.addEventListener('pointerdown',e=>{ if(busy)return; const p=cellFromEvent(e); if(!p)return; down=p; });
+board.addEventListener('pointerup',e=>{ if(busy){down=null;return;} const p=cellFromEvent(e);
+  if(!p){ clearSel(); down=null; return; }
+  if(down && (down.r!==p.r||down.c!==p.c) && adjacent(down,p)){ attemptSwap(down,p); down=null; clearSel(); return; }
+  // tap behaviour
+  if(sel){ if(sel.r===p.r&&sel.c===p.c){ clearSel(); }
+    else if(adjacent(sel,p)){ const a=sel; clearSel(); attemptSwap(a,p); }
+    else { clearSel(); setSel(p); } }
+  else setSel(p);
+  down=null;
+});
+function cellFromEvent(e){ const rect=board.getBoundingClientRect(); const cell=cellPx();
+  const c=Math.floor((e.clientX-rect.left)/cell), r=Math.floor((e.clientY-rect.top)/cell);
+  if(r<0||r>=ROWS||c<0||c>=COLS)return null;
+  const t=S.grid[r][c]; if(!t||t.kind!=='good')return null; return {r,c}; }
+function adjacent(a,b){ return Math.abs(a.r-b.r)+Math.abs(a.c-b.c)===1; }
+function setSel(p){ sel=p; const el=elAt(p.r,p.c); if(el)el.classList.add('sel'); }
+function clearSel(){ if(sel){ const el=elAt(sel.r,sel.c); if(el)el.classList.remove('sel'); } sel=null; }
+function elAt(r,c){ const t=S.grid[r][c]; return t?els.get(t.id):null; }
+
+async function attemptSwap(a,b){
+  busy=true;
+  swapData(a.r,a.c,b.r,b.c); render(); await wait(200);
+  if(findRuns().length===0){ // revert
+    const ea=elAt(a.r,a.c), eb=elAt(b.r,b.c);
+    if(ea)ea.classList.add('bad'); if(eb)eb.classList.add('bad');
+    await wait(180); swapData(a.r,a.c,b.r,b.c); render();
+    if(ea)setTimeout(()=>ea.classList.remove('bad'),300); if(eb)setTimeout(()=>eb.classList.remove('bad'),300);
+    await wait(180); busy=false; return;
+  }
+  S.moves--; updateHUD();
+  await resolveAll();
+  if(!hasMove()){ await reshuffle(); }
+  busy=false;
+  checkEnd();
+}
+
+// ---------- resolve ----------
+async function resolveAll(){
+  let combo=0;
+  while(true){
+    const runs=findRuns(); if(runs.length===0)break;
+    combo++;
+    // collect cleared cells
+    const cleared=new Set(); const key=(r,c)=>r*COLS+c;
+    for(const run of runs) for(const [r,c] of run.cells) cleared.add(key(r,c));
+    // gates adjacent to any cleared good
+    const gateCells=[];
+    cleared.forEach(k=>{ const r=(k/COLS)|0, c=k%COLS;
+      for(const [dr,dc] of [[0,1],[0,-1],[1,0],[-1,0]]){ const r2=r+dr,c2=c+dc;
+        if(r2<0||r2>=ROWS||c2<0||c2>=COLS)continue; const t=S.grid[r2][c2];
+        if(t&&t.kind==='gate'&&!gateCells.some(g=>g[0]===r2&&g[1]===c2)) gateCells.push([r2,c2]); } });
+    // animate clears
+    cleared.forEach(k=>{ const r=(k/COLS)|0,c=k%COLS; const el=elAt(r,c); if(el)el.classList.add('clearing'); });
+    for(const [r,c] of gateCells){ const el=elAt(r,c); if(el)el.classList.add('clearing'); }
+    await wait(210);
+    // remove cleared els
+    cleared.forEach(k=>{ const r=(k/COLS)|0,c=k%COLS; const t=S.grid[r][c]; if(t){const el=els.get(t.id); if(el){el.remove();els.delete(t.id);}} });
+    for(const [r,c] of gateCells){ const t=S.grid[r][c]; if(t){const el=els.get(t.id); if(el){el.remove();els.delete(t.id);}} }
+    // score base clears
+    S.score += cleared.size*5*combo;
+    // clear gates in data + reward
+    for(const [r,c] of gateCells){ S.grid[r][c]=null; S.deal=Math.min(3,S.deal+1); S.score+=20; }
+    // null cleared
+    cleared.forEach(k=>{ const r=(k/COLS)|0,c=k%COLS; S.grid[r][c]=null; });
+    // promotions + ships
+    const usedPivot=new Set();
+    for(const run of runs){
+      if(run.cells.length>=4) S.deal=Math.min(3,S.deal+1);
+      if(run.tier===1){
+        let pv=choosePivot(run,usedPivot); if(pv){ usedPivot.add(key(pv[0],pv[1]));
+          S.grid[pv[0]][pv[1]]=newGood(run.family,2); S.score+=15*combo; }
+      } else if(run.tier===2){ shipProduct(run.family, combo); }
+      else { shipProduct(run.family, combo); }
+    }
+    updateHUD(); renderCart();
+    // gravity + refill
+    gravity(); refill();
+    render();
+    await wait(270);
+  }
+}
+function choosePivot(run, used){ const key=(r,c)=>r*COLS+c;
+  // prefer a cell still null (was cleared) and unused
+  for(const [r,c] of run.cells){ if(!used.has(key(r,c)) && S.grid[r][c]===null) return [r,c]; }
+  return null;
+}
+function gravity(){
+  for(let c=0;c<COLS;c++){ let write=ROWS-1;
+    for(let r=ROWS-1;r>=0;r--){ if(S.grid[r][c]!==null){ const t=S.grid[r][c];
+      if(write!==r){ S.grid[write][c]=t; S.grid[r][c]=null; } write--; } } }
+}
+function refill(){
+  const L=LEVELS[S.li]; const gates=countGates();
+  let budget=Math.max(0,L.gateMax-gates);
+  for(let c=0;c<COLS;c++)for(let r=0;r<ROWS;r++){ if(S.grid[r][c]===null){
+    if(budget>0 && Math.random()<L.gateChance){ S.grid[r][c]=newGate(); budget--; }
+    else S.grid[r][c]=newGood(randFam(),1); } }
+}
+function countGates(){ let n=0; for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const t=S.grid[r][c]; if(t&&t.kind==='gate')n++;} return n; }
+
+function shipProduct(fam, combo){
+  const f=FAM[fam]; const gated=countGates()>0;
+  const surcharge = (f.exempt||!gated) ? 0 : Math.round(f.price*f.tariff);
+  S.cart.push({family:fam, base:f.price, sur:surcharge, exempt:f.exempt});
+  S.base+=f.price; S.extra+=surcharge; S.shipped++;
+  S.score += (f.price + 100)*combo;
+  // fact toast (once per family per level, else a short ship note)
+  if(!S.factsSeen[fam]){ S.factsSeen[fam]=true;
+    toast('<b>'+f.glyph[2]+' '+f.name+' shipped.</b> '+f.fact); }
+  else { toast(f.glyph[2]+' '+f.name+(surcharge?(' shipped. Tariff added $'+surcharge+'.'):' shipped, tariff-free!')); }
+}
+
+// ---------- trade deal ----------
+document.getElementById('dealbtn').addEventListener('click', async ()=>{
+  if(busy || S.deal<3)return; busy=true; S.deal=0; updateHUD();
+  showBanner('🤝','Trade deal!','Tariffs cleared from the board. Ship now to pay nothing extra.', 1100);
+  const gcells=[]; for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const t=S.grid[r][c]; if(t&&t.kind==='gate')gcells.push([r,c]);}
+  for(const [r,c] of gcells){ const el=elAt(r,c); if(el)el.classList.add('clearing'); }
+  await wait(230);
+  for(const [r,c] of gcells){ const t=S.grid[r][c]; if(t){const el=els.get(t.id); if(el){el.remove();els.delete(t.id);} } S.grid[r][c]=null; S.score+=20; }
+  gravity(); refill(); render(); await wait(270);
+  await resolveAll();
+  if(!hasMove()) await reshuffle();
+  busy=false; checkEnd();
+});
+
+async function reshuffle(){
+  toast('No moves left, reshuffling the board.');
+  const goods=[]; for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const t=S.grid[r][c]; if(t&&t.kind==='good')goods.push(t);}
+  let guard=0;
+  do{ for(let i=goods.length-1;i>0;i--){const j=(Math.random()*(i+1))|0; const tmp=goods[i];goods[i]=goods[j];goods[j]=tmp;}
+    let idx=0; for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const t=S.grid[r][c]; if(t&&t.kind==='good')S.grid[r][c]=goods[idx++];}
+  }while((findRuns().length||!hasMove())&&guard++<60);
+  render(); await wait(300); await resolveAll();
+}
+
+// ---------- HUD ----------
+function updateHUD(){
+  const stM=document.getElementById('st-moves'); stM.querySelector('.v').textContent=S.moves;
+  stM.classList.toggle('low', S.moves<=5);
+  document.getElementById('st-score').textContent=S.score.toLocaleString();
+  document.getElementById('st-ship').textContent=S.shipped;
+  const L=LEVELS[S.li];
+  document.getElementById('lvl-goal').textContent='Shipped '+S.shipped+' / '+L.goal;
+  // affordability
+  const pct=Math.max(0, Math.round(100*(1 - S.extra/L.budget)));
+  const bar=document.getElementById('afford-bar'); bar.style.width=pct+'%';
+  bar.style.background = pct>=70?'var(--good)':pct>=40?'var(--gold)':'var(--bad)';
+  document.getElementById('afford-pct').textContent=pct+'%';
+  document.getElementById('afford-note').textContent = S.extra>0 ? ('$'+S.extra+' lost to tariffs') : 'No tariff cost yet';
+  // deal
+  const db=document.getElementById('dealbtn'); const ready=S.deal>=3;
+  db.disabled=!ready; db.classList.toggle('ready',ready);
+  db.textContent = ready ? '🤝 Clear all tariffs!' : '🤝 Bank a deal to clear tariffs';
+  document.getElementById('deal-fill').style.width=Math.min(100,(S.deal/3)*100)+'%';
+  document.getElementById('deal-note').textContent = ready?'Ready. Tap to wipe every tariff gate.':'Charge '+S.deal+'/3 by clearing gates and matching 4+.';
+}
+function renderCart(){
+  const host=document.getElementById('cart-items');
+  if(S.cart.length===0){ host.innerHTML='<div class="empty">Nothing shipped yet. Build a good and ship it.</div>';
+    document.getElementById('cart-tot').hidden=true; return; }
+  host.innerHTML='';
+  S.cart.slice().reverse().forEach(it=>{ const f=FAM[it.family];
+    const d=document.createElement('div'); d.className='citem';
+    d.innerHTML='<span class="em">'+f.glyph[2]+'</span><span class="nm">'+f.name+'</span>'+
+      '<span class="pr"><span class="base">$'+it.base+'</span>'+
+      (it.sur? '<span class="sur">+$'+it.sur+' tariff</span>' : (it.exempt?'<span class="free">exempt</span>':'<span class="free">no tariff</span>'))+
+      '</span>';
+    host.appendChild(d); });
+  const tot=document.getElementById('cart-tot'); tot.hidden=false;
+  document.getElementById('tot-base').textContent='$'+S.base.toLocaleString();
+  document.getElementById('tot-extra').textContent='+$'+S.extra.toLocaleString();
+  document.getElementById('tot-grand').textContent='$'+(S.base+S.extra).toLocaleString();
+}
+
+// ---------- toasts & banner ----------
+let toastTimer=[];
+function toast(html){
+  const host=document.getElementById('toasts');
+  const t=document.createElement('div'); t.className='toast'; t.innerHTML=html; host.appendChild(t);
+  setTimeout(()=>{ t.style.transition='opacity .4s, transform .4s'; t.style.opacity='0'; t.style.transform='translateY(10px)';
+    setTimeout(()=>t.remove(),420); }, 3200);
+  while(host.children.length>2) host.removeChild(host.firstChild);
+}
+function showBanner(big,title,sub,ms){
+  const host=document.getElementById('banner-host');
+  host.innerHTML='<div class="banner"><div class="box"><div class="big">'+big+'</div><h2>'+title+'</h2>'+
+    '<p style="color:var(--muted);margin:0">'+sub+'</p></div></div>';
+  if(ms) setTimeout(()=>{host.innerHTML='';}, ms);
+}
+
+// ---------- end of level ----------
+function checkEnd(){
+  const L=LEVELS[S.li];
+  if(S.shipped>=L.goal){ setTimeout(()=>showReceipt(true),350); }
+  else if(S.moves<=0){ setTimeout(()=>showReceipt(false),350); }
+}
+function showReceipt(won){
+  show('receipt');
+  const L=LEVELS[S.li];
+  const paid=S.base+S.extra, base=S.base;
+  const pct=Math.max(0, Math.round(100*(1 - S.extra/L.budget)));
+  let grade,gline,gcol;
+  if(!won){ grade='—'; gline="Out of moves"; gcol='var(--muted)'; }
+  else if(pct>=80){grade='A';gline='Smart shopping!';gcol='var(--good)';}
+  else if(pct>=55){grade='B';gline='Nicely done.';gcol='var(--good)';}
+  else if(pct>=30){grade='C';gline='Tariffs took a bite.';gcol='var(--gold)';}
+  else {grade='D';gline='The tariffs got you.';gcol='var(--bad)';}
+  document.getElementById('r-eyebrow').textContent = won? ('Level complete — '+L.name) : 'Out of moves';
+  document.getElementById('r-title').textContent = won? 'Your holiday receipt' : 'Try that one again';
+  const ge=document.getElementById('r-grade'); ge.textContent=grade; ge.style.background=gcol;
+  document.getElementById('r-gradeline').textContent=gline;
+  document.getElementById('r-gradesub').textContent = won
+    ? ('You shipped '+S.shipped+' goods. Tariffs added $'+S.extra.toLocaleString()+' to a $'+base.toLocaleString()+' cart.')
+    : ('You shipped '+S.shipped+' of '+L.goal+'. Clear tariff gates faster to ship more before moves run out.');
+  // compare bars
+  const maxv=Math.max(paid,base,1);
+  const bb=document.getElementById('bar-base'), bp=document.getElementById('bar-paid');
+  setTimeout(()=>{ bb.style.width=Math.round(base/maxv*100)+'%'; bp.style.width=Math.round(paid/maxv*100)+'%'; },60);
+  bb.textContent='$'+base.toLocaleString(); bp.textContent='$'+paid.toLocaleString();
+  // takeaway
+  document.getElementById('r-takeaway').innerHTML = won
+    ? 'Tariffs are a tax paid at the border that flows into shelf prices. Economists estimate they cost the average US household about <b>$1,000 to $1,800 a year</b>. A durable US-Canada deal is how that cost comes down, and how businesses get the certainty to invest and hire.'
+    : 'Every tariff gate left on the board when you ship adds a surcharge. Bank a Trade Deal to wipe them, then ship a run of finished goods.';
+  // facts for families shipped
+  const fl=document.getElementById('r-facts'); fl.innerHTML='';
+  const seen=Object.keys(S.factsSeen);
+  (seen.length?seen:LEVELS[S.li].fams).forEach(fam=>{ const f=FAM[fam];
+    const d=document.createElement('div'); d.className='f';
+    d.innerHTML='<span class="em">'+f.glyph[2]+'</span><span>'+f.fact+'</span>'; fl.appendChild(d); });
+  // buttons
+  const next=document.getElementById('r-next');
+  if(won && S.li<LEVELS.length-1){ next.textContent='Next level'; next.onclick=()=>startLevel(S.li+1); }
+  else if(won){ next.textContent='Play again from the top'; next.onclick=()=>startLevel(0); }
+  else { next.textContent='Try again'; next.onclick=()=>startLevel(S.li); }
+  document.getElementById('r-replay').onclick=()=>startLevel(S.li);
+}
+
+// ---------- screens ----------
+function show(name){ ['start','game','receipt'].forEach(s=>{ document.getElementById('screen-'+s).hidden=(s!==name); }); }
+function startLevel(li){
+  // clear board dom
+  els.forEach(el=>el.remove()); els.clear(); sel=null; busy=false;
+  S=freshState(li); buildBoard();
+  document.getElementById('lvl-name').textContent=LEVELS[li].name;
+  show('game'); updateHUD(); renderCart();
+  sizeBoard(); render();
+  const L=LEVELS[li];
+  showBanner(L.name.split(' ')[0], L.name.replace(/^\S+\s/,''),
+    'Ship '+L.goal+' finished goods in '+L.moves+' moves. Clear the tariff gates to keep prices down.', 1600);
+  saveSnap();
+}
+
+// ---------- tutorial ----------
+function tileHTML(fam,tier){ const f=FAM[fam]; let d=''; for(let i=0;i<tier;i++)d+='<i></i>';
+  return '<div class="tile static" data-kind="good" data-family="'+fam+'" data-tier="'+tier+'">'+
+    '<div class="face"><span>'+f.glyph[tier-1]+'</span><span class="dots">'+d+'</span></div></div>'; }
+function gateHTML(pct){ return '<div class="tile static" data-kind="gate"><div class="face">'+
+  '<span>'+pct+'%</span><span class="lab">TARIFF</span></div></div>'; }
+function arrow(){ return '<span class="arrow">➜</span>'; }
+const TUT=[
+ {ct:'The goal', title:'Welcome to Tariff Tangle',
+  vis:()=> tileHTML('dinner',1)+arrow()+tileHTML('dinner',2)+arrow()+tileHTML('dinner',3)+'<span class="arrow">🚚</span>',
+  text:"You're stocking the holidays shared by the US and Canada. Build raw materials into finished goods and ship them to your cart before your moves run out."},
+ {ct:'Step 1', title:'Swap and match 3',
+  vis:()=> tileHTML('maple',1)+tileHTML('maple',1)+tileHTML('maple',1)+arrow()+tileHTML('maple',2),
+  text:"Tap a tile, then a neighbour, to swap them (or drag). Line up three of the same tile. They don't just vanish, they combine into the next stage up the supply chain."},
+ {ct:'Step 2', title:'Build it, then ship it',
+  vis:()=> tileHTML('tree',1)+arrow()+tileHTML('tree',2)+arrow()+tileHTML('tree',3),
+  text:"Watch the dots: raw material (1) becomes a part (2) becomes a finished good (3). The instant a good is finished, it ships to your Holiday Cart and scores big."},
+ {ct:'Why it matters', title:'Every good crosses the border',
+  vis:()=> '<span class="flagline">🇨🇦 ➜ 🚗 ➜ 🇺🇸</span>',
+  text:"The goods you build are made by both countries together. One car part can cross the US-Canada border four times before assembly. That is the real supply chain you're playing."},
+ {ct:'Watch out', title:'Clear the tariff gates',
+  vis:()=> gateHTML(25)+'<span class="arrow">=</span><span class="cartex">🎄 Tree $60 <span class="sur">+$9 tariff</span></span>',
+  text:"Striped tariff tiles can't be swapped. While any sit on the board, every good you ship gets a surcharge added to its price. Clear a gate by making a match right next to it."},
+ {ct:'Your edge', title:'Bank a Trade Deal',
+  vis:()=> '<span style="font-size:1.3rem;font-weight:800;color:var(--green);font-family:var(--disp)">🤝 Trade Deal</span>',
+  text:"Clearing gates and matching 4 or more charges your Trade Deal. Spend it to wipe every tariff at once. Ship your goal and keep the affordability meter high to win the level."},
+];
+let tutIdx=0, tutThenStart=false;
+function openTutorial(thenStart){ tutThenStart=thenStart; tutIdx=0; renderTut(); }
+function renderTut(){
+  const host=document.getElementById('banner-host');
+  const s=TUT[tutIdx]; const last=tutIdx===TUT.length-1;
+  let dots=''; for(let i=0;i<TUT.length;i++)dots+='<i class="'+(i===tutIdx?'on':'')+'"></i>';
+  host.innerHTML='<div class="tut-ov"><div class="tut">'+
+    '<div class="vis">'+s.vis()+'</div>'+
+    '<div class="body"><span class="step-ct">'+s.ct+' · '+(tutIdx+1)+' of '+TUT.length+'</span>'+
+      '<h2>'+s.title+'</h2><p>'+s.text+'</p></div>'+
+    '<div class="nav"><button class="skip" id="tut-skip">'+(tutThenStart?'Skip':'Close')+'</button>'+
+    '<div class="dots2">'+dots+'</div><div style="display:flex;gap:8px">'+
+      (tutIdx>0?'<button class="btn ghost" id="tut-back" style="padding:10px 15px">Back</button>':'')+
+      '<button class="btn" id="tut-next" style="padding:10px 18px">'+(last?(tutThenStart?"Let's play":'Got it'):'Next')+'</button>'+
+    '</div></div></div></div>';
+  document.getElementById('tut-next').onclick=()=>{ if(last){ closeTut(); if(tutThenStart)startLevel(0); } else { tutIdx++; renderTut(); } };
+  const bk=document.getElementById('tut-back'); if(bk)bk.onclick=()=>{ tutIdx--; renderTut(); };
+  document.getElementById('tut-skip').onclick=()=>{ closeTut(); if(tutThenStart)startLevel(0); };
+}
+function closeTut(){ document.getElementById('banner-host').innerHTML=''; }
+document.getElementById('play').addEventListener('click',()=>openTutorial(true));
+const _help=document.getElementById('help'); if(_help)_help.addEventListener('click',()=>openTutorial(false));
+
+// ---------- theme ----------
+const themeBtn=document.getElementById('theme');
+themeBtn.addEventListener('click',()=>{ const root=document.documentElement;
+  const cur=root.getAttribute('data-theme');
+  const sysDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
+  let next; if(cur==='dark')next='light'; else if(cur==='light')next='dark'; else next=sysDark?'light':'dark';
+  root.setAttribute('data-theme',next); try{localStorage.setItem('tc-theme',next);}catch(e){} });
+try{ const sv=localStorage.getItem('tc-theme'); if(sv)document.documentElement.setAttribute('data-theme',sv); }catch(e){}
+
+// ---------- misc ----------
+function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
+window.addEventListener('resize', ()=>{ clearTimeout(window._rz); window._rz=setTimeout(sizeBoard,120); });
+
+// ---------- hot reload snapshot ----------
+function saveSnap(){ try{ if(window.claude&&window.claude.hot&&window.claude.hot.snapshot)
+  window.claude.hot.snapshot(()=>({S, uid})); }catch(e){} }
+function boot(data){
+  try{ if(data&&data.S){ S=data.S; uid=data.uid||uid;
+    show('game'); document.getElementById('lvl-name').textContent=LEVELS[S.li].name;
+    updateHUD(); renderCart(); sizeBoard(); render(); return; } }catch(e){}
+  show('start');
+}
+try{ if(window.claude&&window.claude.hot&&window.claude.hot.ready) window.claude.hot.ready(boot);
+  else boot((window.claude&&window.claude.hot&&window.claude.hot.data)||{}); }
+catch(e){ show('start'); }
+})();
+</script>
+
+</body>
+</html>

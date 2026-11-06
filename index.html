@@ -423,13 +423,13 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
         </div>
         <div class="card widget deal">
           <h3 style="margin-bottom:6px">Reach a Trade Deal</h3>
+          <button class="dealbtn" id="dealbtn" disabled>Build support for a deal</button>
           <div class="seats" id="deal-seats">
             <span class="seat"><span class="ico">🇺🇸</span><small>President</small></span>
             <span class="seat"><span class="ico">🇨🇦</span><small>Prime Minister</small></span>
             <span class="seat"><span class="ico">🇺🇸</span><small>Congress</small></span>
             <span class="seat"><span class="ico">🇨🇦</span><small>Parliament</small></span>
           </div>
-          <button class="dealbtn" id="dealbtn" disabled>Build support for a deal</button>
           <small id="deal-note">Ship goods and make big matches to bring politicians in the U.S. and Canada on board with a trade deal.</small>
         </div>
         <div class="card widget afford">
@@ -451,8 +451,9 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
           <h3>Legend</h3>
           <div class="legend">
             <b>•</b> raw material &nbsp; <b>••</b> part &nbsp; <b>•••</b> finished.<br>
-            Build 1→2→3 to ship a finished good. The striped tile is a <b>tariff gate</b>: it can't be moved or
-            matched and taxes everything you ship, raising holiday prices for families. Only a trade deal clears tariffs.
+            Build 1→2→3 to ship a finished good. Match <b>4 or 5</b> in a row for bonus production and a free move.
+            The striped tile is a <b>tariff gate</b>: it can't be moved or matched and taxes everything you ship,
+            raising holiday prices for families. Only a trade deal clears tariffs.
           </div>
         </div>
       </aside>
@@ -727,10 +728,11 @@ async function attemptSwap(a,b){
 function gainSupport(n){ if(S.dealt)return; S.mom+=n;
   while(S.mom>=DEAL_STEP && S.deal<4){ S.deal++; S.mom-=DEAL_STEP; } }
 async function resolveAll(){
-  let combo=0;
+  let combo=0; let bonusMoveGiven=false;
   while(true){
     const runs=findRuns(); if(runs.length===0)break;
     combo++; sfx('pop');
+    if(combo===3) toast('🔥 Chain reaction!');
     const cleared=new Set(); const key=(r,c)=>r*COLS+c;
     for(const run of runs) for(const [r,c] of run.cells) cleared.add(key(r,c));
     cleared.forEach(k=>{ const r=(k/COLS)|0,c=k%COLS; const el=elAt(r,c); if(el)el.classList.add('clearing'); });
@@ -741,11 +743,17 @@ async function resolveAll(){
     cleared.forEach(k=>{ const r=(k/COLS)|0,c=k%COLS; S.grid[r][c]=null; });
     const usedPivot=new Set();
     for(const run of runs){
-      if(run.cells.length>=4) gainSupport(6);
+      const L=run.cells.length;
+      if(L>=4) gainSupport(6);
+      if(L>=5){ gainSupport(6);
+        if(!bonusMoveGiven){ bonusMoveGiven=true; S.moves++; sfx('bonus'); toast('⚡ Efficient supply chain! +1 move'); } }
+      const outputs = L>=5 ? 2 : 1;
       if(run.tier===1){
-        let pv=choosePivot(run,usedPivot); if(pv){ usedPivot.add(key(pv[0],pv[1]));
-          S.grid[pv[0]][pv[1]]=newGood(run.family,2); S.score+=15*combo; }
-      } else { const a=run.cells[(run.cells.length/2)|0]; shipProduct(run.family, combo, a); }
+        for(let o=0;o<outputs;o++){ const pv=choosePivot(run,usedPivot); if(!pv)break;
+          usedPivot.add(key(pv[0],pv[1])); S.grid[pv[0]][pv[1]]=newGood(run.family,2); S.score+=15*combo; }
+      } else {
+        for(let o=0;o<outputs;o++){ const a=run.cells[Math.min(o*2, run.cells.length-1)]; shipProduct(run.family, combo, a); }
+      }
     }
     updateHUD(); renderCart();
     gravity(); refill();
@@ -1131,6 +1139,7 @@ function sfx(kind){
   else if(kind==='deal'){ [523,659,784,1047].forEach((f,i)=>tone(f,0.22,'triangle',0.07,i*0.07)); }
   else if(kind==='bad') tone(120,0.12,'sawtooth',0.045);
   else if(kind==='win'){ [523,659,784,1047,1319].forEach((f,i)=>tone(f,0.3,'triangle',0.08,i*0.1)); }
+  else if(kind==='bonus'){ tone(660,0.1,'triangle',0.08); tone(990,0.15,'triangle',0.08,0.09); }
 }
 const soundBtn=document.getElementById('sound');
 function updSound(){ if(soundBtn)soundBtn.textContent=muted?'🔇':'🔊'; }

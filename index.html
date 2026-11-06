@@ -180,9 +180,11 @@ button{font-family:var(--disp);cursor:pointer}
 @keyframes ship{40%{transform:scale(1.18)}to{transform:scale(0) translateY(-30px);opacity:0}}
 @keyframes shake{25%{transform:translateX(-4px)}50%{transform:translateX(4px)}75%{transform:translateX(-3px)}}
 @keyframes hintpulse{0%,100%{box-shadow:inset 0 -3px 0 rgba(0,0,0,.14)}50%{box-shadow:0 0 0 4px var(--gold)}}
+.flyship{position:fixed;transform:translate(-50%,-50%);font-size:2.2rem;z-index:45;pointer-events:none;
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.3));transition:transform .6s cubic-bezier(.2,.7,.3,1), opacity .6s ease}
 
 /* ---------- side widgets ---------- */
-.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat3{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 8px;text-align:center;box-shadow:var(--shadow)}
 .stat .v{font-family:var(--disp);font-weight:800;font-size:1.15rem;font-variant-numeric:tabular-nums}
 .stat .k{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
@@ -416,8 +418,7 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
       </div>
       <aside class="side">
         <div class="stat3">
-          <div class="stat" id="st-moves"><div class="v">22</div><div class="k">Moves</div></div>
-          <div class="stat"><div class="v" id="st-score">0</div><div class="k">Score</div></div>
+          <div class="stat" id="st-moves"><div class="v">24</div><div class="k">Moves</div></div>
           <div class="stat"><div class="v" id="st-ship">0</div><div class="k">Shipped</div></div>
         </div>
         <div class="card widget deal">
@@ -520,7 +521,7 @@ const COLS=7, ROWS=7;
 const SHARE_URL = ""; // TODO: set to the live game URL before launch (used in share links)
 const PROMO_URL = SHARE_URL || "https://cabc.co";
 const SHARE_TAG = "TariffTangle";
-const DEAL_STEP = 10; // momentum points needed to win over each of the 4 parties
+const DEAL_STEP = 16; // momentum points needed to win over each of the 4 parties
 const META = {levels:{}}; // per-level results for a playthrough, keyed by level index
 
 const FAM = {
@@ -539,7 +540,7 @@ const FAM = {
   energy:{name:"Holiday Lights", glyph:["🛢️","🔌","💡"], tname:["Fuel","Power","Lights"],
     price:40, tariff:0.0, exempt:true,
     fact:"Canada supplies about 60% of US oil imports and powers the Northeast grid, with no tariff on energy today.", src:"EIA"},
-  toys:{name:"Toys & Games", glyph:["🧱","🧩","🧸"], tname:["Materials","Parts","Toy"],
+  toys:{name:"Toys & Games", glyph:["🧵","🧩","🧸"], tname:["Fabric","Parts","Toy"],
     price:35, tariff:0.15, exempt:false,
     fact:"Most toys are made overseas, so tariffs on toys and their parts push up the prices families pay over the holidays.", src:"Peterson Institute"},
   newyear:{name:"New Year's Party", glyph:["🧻","📯","🎉"], tname:["Paper","Noisemakers","Party"],
@@ -646,6 +647,14 @@ function makeEl(t){
   return el;
 }
 function cellPx(){ return parseFloat(getComputedStyle(board).getPropertyValue('--cell')); }
+function flyShip(r,c,glyph){
+  try{ const cell=cellPx(); const rect=board.getBoundingClientRect();
+    const el=document.createElement('div'); el.className='flyship'; el.textContent=glyph;
+    el.style.left=(rect.left+c*cell+cell/2)+'px'; el.style.top=(rect.top+r*cell+cell/2)+'px';
+    document.body.appendChild(el);
+    requestAnimationFrame(()=>{ el.style.transform='translate(-50%,-50%) translateY(-74px) scale(1.7)'; el.style.opacity='0'; });
+    setTimeout(()=>el.remove(),680);
+  }catch(e){} }
 
 function render(){
   const cell=cellPx();
@@ -736,7 +745,7 @@ async function resolveAll(){
       if(run.tier===1){
         let pv=choosePivot(run,usedPivot); if(pv){ usedPivot.add(key(pv[0],pv[1]));
           S.grid[pv[0]][pv[1]]=newGood(run.family,2); S.score+=15*combo; }
-      } else { shipProduct(run.family, combo); }
+      } else { const a=run.cells[(run.cells.length/2)|0]; shipProduct(run.family, combo, a); }
     }
     updateHUD(); renderCart();
     gravity(); refill();
@@ -762,8 +771,9 @@ function refill(){
 }
 function countGates(){ let n=0; for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const t=S.grid[r][c]; if(t&&t.kind==='gate')n++;} return n; }
 
-function shipProduct(fam, combo){
+function shipProduct(fam, combo, anchor){
   const f=FAM[fam]; const gated=countGates()>0; sfx('ship');
+  if(anchor) flyShip(anchor[0], anchor[1], f.glyph[2]);
   const surcharge = (f.exempt||!gated) ? 0 : Math.round(f.price*f.tariff);
   S.cart.push({family:fam, base:f.price, sur:surcharge, exempt:f.exempt});
   S.base+=f.price; S.extra+=surcharge; S.shipped++;
@@ -802,7 +812,6 @@ async function reshuffle(){
 function updateHUD(){
   const stM=document.getElementById('st-moves'); stM.querySelector('.v').textContent=S.moves;
   stM.classList.toggle('low', S.moves<=5);
-  document.getElementById('st-score').textContent=S.score.toLocaleString();
   document.getElementById('st-ship').textContent=S.shipped;
   const L=LEVELS[S.li];
   document.getElementById('lvl-goal').textContent='Shipped '+S.shipped+' / '+L.goal;
@@ -838,7 +847,7 @@ function renderCart(){
     const d=document.createElement('div'); d.className='citem';
     d.innerHTML='<span class="em">'+f.glyph[2]+'</span><span class="nm">'+f.name+'</span>'+
       '<span class="pr"><span class="base">$'+it.base+'</span>'+
-      (it.sur? '<span class="sur">+$'+it.sur+' tariff</span>' : (it.exempt?'<span class="free">exempt</span>':'<span class="free">no tariff</span>'))+
+      (it.sur? '<span class="sur">+$'+it.sur+' tariff</span>' : '<span class="free">no tariff</span>')+
       '</span>';
     host.appendChild(d); });
   const tot=document.getElementById('cart-tot'); tot.hidden=false;

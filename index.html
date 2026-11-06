@@ -6,7 +6,7 @@
 <title>Tariff Tangle</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta property="og:title" content="Tariff Tangle">
-<meta property="og:description" content="A US-Canada holiday trade game. Build cross-border holiday goods and clear tariffs to keep your cart affordable.">
+<meta property="og:description" content="A US-Canada holiday trade game. Build cross-border holiday goods and strike a trade deal to keep prices down for families.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <!-- Before launch: set og:url and og:image (and SHARE_URL in the script) to your live hosted URLs. -->
@@ -364,7 +364,7 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
       <span class="eyebrow">Canadian American Business Council</span>
       <h2>Stock the season.<br>Beat the tariffs.</h2>
       <p class="lede">The US and Canada build the holidays together. Match raw materials into finished holiday
-        goods, ship them to your cart, and clear the tariff gates to keep it all affordable.</p>
+        goods, ship them to your cart, and sign a trade deal to clear the tariffs that raise holiday prices.</p>
       <div class="herochain" aria-hidden="true">
         <span class="chlabel">From raw material to finished gift</span>
         <div class="tile static" data-kind="good" data-family="dinner" data-tier="1"><div class="face"><span>🌾</span><span class="dots"><i></i></span></div></div>
@@ -551,14 +551,14 @@ const FAM = {
 };
 
 const LEVELS = [
-  {name:"🦃 Thanksgiving Table", fams:["dinner","maple","tree"], moves:22, goal:4,
+  {name:"🦃 Thanksgiving Table", fams:["dinner","maple","tree"], moves:24, goal:3,
    gateStart:2, gateChance:0.045, gateMax:5, budget:120},
-  {name:"🕎 Festival of Lights", fams:["hanukkah","energy","maple","tree"], moves:23, goal:4,
+  {name:"🕎 Festival of Lights", fams:["hanukkah","energy","tree"], moves:26, goal:4,
    gateStart:2, gateChance:0.05, gateMax:6, budget:170},
-  {name:"🎄 Christmas Morning", fams:["tree","auto","toys","dinner"], moves:24, goal:5,
+  {name:"🎄 Christmas Morning", fams:["toys","auto","tree"], moves:28, goal:4,
    gateStart:3, gateChance:0.055, gateMax:7, budget:300},
-  {name:"🎆 New Year's Eve", fams:["newyear","energy","auto","maple","dinner"], moves:26, goal:6,
-   gateStart:3, gateChance:0.065, gateMax:8, budget:460},
+  {name:"🎆 New Year's Eve", fams:["newyear","maple","dinner"], moves:30, goal:5,
+   gateStart:3, gateChance:0.06, gateMax:7, budget:440},
 ];
 
 // ---------- state ----------
@@ -925,7 +925,7 @@ function showReceipt(won){
   document.getElementById('r-gradeline').textContent=gline;
   document.getElementById('r-gradesub').textContent = won
     ? ('You shipped '+S.shipped+' goods. Tariffs added $'+S.extra.toLocaleString()+' to a $'+base.toLocaleString()+' cart.')
-    : ('You shipped '+S.shipped+' of '+L.goal+'. Clear tariff gates faster to ship more before moves run out.');
+    : ('You shipped '+S.shipped+' of '+L.goal+'. Build and ship goods faster, and sign a trade deal to cut the cost, before moves run out.');
   const maxv=Math.max(paid,base,1);
   const bb=document.getElementById('bar-base'), bp=document.getElementById('bar-paid');
   setTimeout(()=>{ bb.style.width=Math.round(base/maxv*100)+'%'; bp.style.width=Math.round(paid/maxv*100)+'%'; },60);

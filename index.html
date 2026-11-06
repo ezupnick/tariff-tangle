@@ -18,6 +18,7 @@
   --line:#d7e0df; --accent:#c6372f; --gold:#c8902a; --green:#1f7a4d;
   --good:#1f7a4d; --warn:#c8902a; --bad:#c6372f;
   --f-dinner:#e39a3a; --f-maple:#cd5a38; --f-tree:#2f8a57; --f-auto:#5f82a0; --f-energy:#e4c23f;
+  --f-toys:#7a6cc2; --f-newyear:#cc5a93; --f-hanukkah:#3a6ea5;
   --gate:#8c99a1; --shadow:0 6px 20px rgba(14,40,34,.12);
   --disp:"Baloo 2", ui-rounded, "Segoe UI", system-ui, sans-serif;
   --body:"Nunito", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
@@ -153,6 +154,9 @@ button{font-family:var(--disp);cursor:pointer}
 .tile[data-family=tree] .face{background:var(--f-tree)}
 .tile[data-family=auto] .face{background:var(--f-auto)}
 .tile[data-family=energy] .face{background:var(--f-energy)}
+.tile[data-family=toys] .face{background:var(--f-toys)}
+.tile[data-family=newyear] .face{background:var(--f-newyear)}
+.tile[data-family=hanukkah] .face{background:var(--f-hanukkah)}
 .tile[data-tier="2"] .face{filter:saturate(1.15) brightness(.97)}
 .tile[data-tier="3"] .face{filter:saturate(1.3) brightness(.9)}
 .tile .dots{position:absolute;bottom:3px;left:0;right:0;display:flex;gap:2px;justify-content:center}
@@ -376,7 +380,8 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
       </div>
       <div class="famrow" aria-hidden="true">
         <span class="fp">🦃 Dinner</span><span class="fp">🍪 Maple</span><span class="fp">🎄 Tree</span>
-        <span class="fp">🚗 Car</span><span class="fp">💡 Lights</span>
+        <span class="fp">🚗 Car</span><span class="fp">💡 Lights</span><span class="fp">🧸 Toys</span>
+        <span class="fp">🎉 Party</span><span class="fp">🕎 Menorah</span>
       </div>
     </div>
     <div class="how">
@@ -534,15 +539,26 @@ const FAM = {
   energy:{name:"Holiday Lights", glyph:["🛢️","🔌","💡"], tname:["Fuel","Power","Lights"],
     price:40, tariff:0.0, exempt:true,
     fact:"Canada supplies about 60% of US oil imports and powers the Northeast grid, with no tariff on energy today.", src:"EIA"},
+  toys:{name:"Toys & Games", glyph:["🧱","🧩","🧸"], tname:["Materials","Parts","Toy"],
+    price:35, tariff:0.15, exempt:false,
+    fact:"Most toys are made overseas, so tariffs on toys and their parts push up the prices families pay over the holidays.", src:"Peterson Institute"},
+  newyear:{name:"New Year's Party", glyph:["🧻","📯","🎉"], tname:["Paper","Noisemakers","Party"],
+    price:18, tariff:0.12, exempt:false,
+    fact:"Canada is the top supplier of paper and packaging to the US, the material behind party hats, streamers, wrapping and boxes.", src:"US Census; UN Comtrade"},
+  hanukkah:{name:"Hanukkah Lights", glyph:["🪔","🕯️","🕎"], tname:["Oil","Candles","Menorah"],
+    price:30, tariff:0.12, exempt:false,
+    fact:"Candles, menorahs and holiday decorations use imported wax, oil and metals, and tariffs on those inputs raise their prices.", src:"US Census"},
 };
 
 const LEVELS = [
   {name:"🦃 Thanksgiving Table", fams:["dinner","maple","tree"], moves:22, goal:4,
    gateStart:2, gateChance:0.045, gateMax:5, budget:120},
-  {name:"🎄 Christmas Morning", fams:["dinner","maple","tree","auto"], moves:24, goal:5,
-   gateStart:3, gateChance:0.055, gateMax:7, budget:260},
-  {name:"🎆 New Year's Eve", fams:["maple","tree","auto","energy","dinner"], moves:26, goal:6,
-   gateStart:3, gateChance:0.065, gateMax:8, budget:420},
+  {name:"🕎 Festival of Lights", fams:["hanukkah","energy","maple","tree"], moves:23, goal:4,
+   gateStart:2, gateChance:0.05, gateMax:6, budget:170},
+  {name:"🎄 Christmas Morning", fams:["tree","auto","toys","dinner"], moves:24, goal:5,
+   gateStart:3, gateChance:0.055, gateMax:7, budget:300},
+  {name:"🎆 New Year's Eve", fams:["newyear","energy","auto","maple","dinner"], moves:26, goal:6,
+   gateStart:3, gateChance:0.065, gateMax:8, budget:460},
 ];
 
 // ---------- state ----------

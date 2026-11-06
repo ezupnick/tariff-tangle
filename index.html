@@ -554,6 +554,7 @@ const I18N={
   tt_home:"Start over", tt_sound:"Sound on / off", tt_help:"How to play", tt_theme:"Switch light / dark", tt_lang:"Français", lang_btn:"FR",
   deal_build:"Build support for a deal", deal_sign:"🤝 Sign the US-Canada deal", deal_signed:"🤝 Deal signed",
   deal_note_idle:"Ship goods and make big matches to bring politicians in the U.S. and Canada on board with a trade deal.",
+  deal_note_ship_a:"Ship ", deal_note_ship_b:" more of your own goods to win the last vote and unlock the deal.",
   deal_note_ready:"Everyone is on board. Sign the deal to roll back every tariff.",
   deal_note_signed:"Deal signed. Tariffs stay down for the rest of the level.",
   afford_none:"No tariff cost yet", afford_cost_suf:" in higher holiday prices", goal_prefix:"Shipped ",
@@ -610,6 +611,7 @@ const I18N={
   tt_home:"Recommencer", tt_sound:"Son activé / désactivé", tt_help:"Comment jouer", tt_theme:"Thème clair / foncé", tt_lang:"English", lang_btn:"EN",
   deal_build:"Obtenez des appuis", deal_sign:"🤝 Signer l'entente", deal_signed:"🤝 Entente signée",
   deal_note_idle:"Expédiez des biens et faites de gros agencements pour rallier les politiciens du Canada et des États-Unis à une entente commerciale.",
+  deal_note_ship_a:"Expédiez ", deal_note_ship_b:" bien(s) de plus pour obtenir le dernier appui et débloquer l'entente.",
   deal_note_ready:"Tout le monde est d'accord. Signez l'entente pour annuler tous les tarifs.",
   deal_note_signed:"Entente signée. Les tarifs restent à zéro pour le reste du niveau.",
   afford_none:"Aucun coût tarifaire", afford_cost_suf:" de hausse des prix des Fêtes", goal_prefix:"Expédiés ",
@@ -871,7 +873,8 @@ async function attemptSwap(a,b){
 
 // ---------- resolve ----------
 function gainSupport(n){ if(S.dealt)return; S.mom+=n;
-  while(S.mom>=DEAL_STEP && S.deal<4){ S.deal++; S.mom-=DEAL_STEP; } }
+  const cap=(S.shipped>=Math.ceil(LEVELS[S.li].goal/2))?4:3;
+  while(S.mom>=DEAL_STEP && S.deal<cap){ S.deal++; S.mom-=DEAL_STEP; } }
 async function resolveAll(){
   let combo=0; let bonusMoveGiven=false;
   while(true){
@@ -983,10 +986,13 @@ function updateHUD(){
     document.getElementById('deal-note').textContent=TR('deal_note_signed');
   } else {
     const ready=S.deal>=4;
+    const minShips=Math.ceil(L.goal/2);
     seatsEls.forEach((s,idx)=>s.classList.toggle('on', idx<S.deal));
     db.disabled=!ready; db.classList.toggle('ready',ready);
     db.textContent = ready ? TR('deal_sign') : TR('deal_build');
-    document.getElementById('deal-note').textContent = ready ? TR('deal_note_ready') : TR('deal_note_idle');
+    document.getElementById('deal-note').textContent = ready ? TR('deal_note_ready')
+      : (S.deal>=3 && S.shipped<minShips) ? (TR('deal_note_ship_a')+(minShips-S.shipped)+TR('deal_note_ship_b'))
+      : TR('deal_note_idle');
   }
 }
 function renderCart(){

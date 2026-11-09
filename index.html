@@ -551,6 +551,7 @@ const META = {levels:{}}; // per-level results for a playthrough, keyed by level
 // ---------- i18n ----------
 let lang='en'; try{const sv=localStorage.getItem('tt-lang'); if(sv==='fr'||sv==='en')lang=sv;}catch(e){}
 let lastWon=false; let curOverlay=null;
+let coachTariff=false; try{coachTariff=localStorage.getItem('tt-coach-tariff')==='1';}catch(e){}
 const I18N={
  en:{
   sub:"A US-Canada holiday trade game", cabc:"Canadian American Business Council",
@@ -569,6 +570,7 @@ const I18N={
   cart_base:"Base cost", cart_sur:"Tariff surcharge", cart_paid:"You paid", legend_h3:"Legend",
   legend_body:"<b>•</b> raw material &nbsp; <b>••</b> part &nbsp; <b>•••</b> finished.<br>Build 1→2→3 to ship a finished good. Match <b>4 or 5</b> in a row for bonus production and a free move. The striped tile is a <b>tariff gate</b>: it can't be moved or matched and taxes everything you ship, raising holiday prices for families. Only a trade deal clears tariffs.",
   costbar_label:"Tariffs added to holiday prices", hint:"💡 Hint", howmini_ship:"ship a product",
+  coach_t:"How tariffs work", coach_a:"That tariff just added ", coach_b:" to this shipment. Tariff tiles tax everything you ship until you sign a US-Canada trade deal.",
   compare_deal:"With a deal", compare_paid:"What you paid",
   finale_eyebrow:"Season complete", finale_h2:"You made it to New Year's",
   fstat_ship:"Goods shipped", fstat_paid:"You paid", fstat_tariff:"Tariff cost", finale_again:"Play the season again",
@@ -626,6 +628,7 @@ const I18N={
   cart_base:"Coût de base", cart_sur:"Surtaxe tarifaire", cart_paid:"Vous avez payé", legend_h3:"Légende",
   legend_body:"<b>•</b> matière première &nbsp; <b>••</b> pièce &nbsp; <b>•••</b> fini.<br>Bâtissez 1→2→3 pour expédier un bien fini. Associez <b>4 ou 5</b> de suite pour une production bonus et un coup gratuit. La tuile rayée est une <b>barrière tarifaire</b> : impossible à déplacer ou à associer, elle taxe tout ce que vous expédiez et fait grimper les prix des Fêtes pour les familles. Seule une entente commerciale élimine les tarifs.",
   costbar_label:"Tarifs ajoutés aux prix des Fêtes", hint:"💡 Indice", howmini_ship:"expédier un produit",
+  coach_t:"Comment fonctionnent les tarifs", coach_a:"Ce tarif vient d'ajouter ", coach_b:" à cet envoi. Les tuiles tarifaires taxent tout ce que vous expédiez jusqu'à la signature d'une entente Canada–É.-U.",
   compare_deal:"Avec une entente", compare_paid:"Ce que vous avez payé",
   finale_eyebrow:"Saison terminée", finale_h2:"Vous voilà rendu au Nouvel An",
   fstat_ship:"Biens expédiés", fstat_paid:"Vous avez payé", fstat_tariff:"Coût des tarifs", finale_again:"Rejouer la saison",
@@ -960,6 +963,8 @@ function shipProduct(fam, combo, anchor){
   const surchargePreview = (f.exempt||!gated) ? 0 : Math.round(f.price*f.tariff);
   if(anchor) flyShip(anchor[0], anchor[1], f.glyph[2], surchargePreview);
   if(surchargePreview>0) pulseGates();
+  if(surchargePreview>0 && !coachTariff){ coachTariff=true; try{localStorage.setItem('tt-coach-tariff','1');}catch(e){}
+    toast('<b>🛃 '+TR('coach_t')+'</b> '+TR('coach_a')+money(surchargePreview)+TR('coach_b'), {dur:8000, big:true}); }
   const surcharge = (f.exempt||!gated) ? 0 : Math.round(f.price*f.tariff);
   S.cart.push({family:fam, base:f.price, sur:surcharge, exempt:f.exempt});
   S.base+=f.price; S.extra+=surcharge; S.shipped++;

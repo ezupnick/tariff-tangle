@@ -140,6 +140,15 @@ button{font-family:var(--disp);cursor:pointer}
 .costbar.hot .cb-label{color:var(--bad)}
 .costbar .cb-amt{font-family:var(--disp);font-weight:800;font-size:1.5rem;font-variant-numeric:tabular-nums;color:var(--muted)}
 .costbar.hot .cb-amt{color:var(--bad)}
+.howmini{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  font-family:var(--disp);font-weight:700;font-size:.78rem;color:var(--muted);
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:7px 12px;box-shadow:var(--shadow)}
+.howmini .seg{display:inline-flex;align-items:center;gap:5px}
+.howmini .dd{display:inline-flex;align-items:center;gap:2px;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:6px;padding:4px 6px}
+.howmini .dd i{width:5px;height:5px;border-radius:50%;background:var(--muted)}
+.howmini .ar{color:var(--muted)}
+.howmini .sep{opacity:.45}
 
 .boardwrap{width:100%;display:flex;justify-content:center}
 .board{position:relative;background:var(--surface-2);border:1px solid var(--line);border-radius:16px;
@@ -416,6 +425,11 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
           <span class="cb-amt" id="cb-amt">$0</span>
         </div>
         <div class="boardwrap"><div class="board" id="board" aria-label="Game board"></div></div>
+        <div class="howmini">
+          <span class="seg"><span class="dd"><i></i></span>&times;3<span class="ar">➜</span><span class="dd"><i></i><i></i></span></span>
+          <span class="sep">·</span>
+          <span class="seg"><span class="dd"><i></i><i></i></span>&times;3<span class="ar">➜</span><span>🚚 <span data-i18n="howmini_ship">ship a product</span></span></span>
+        </div>
       </div>
       <aside class="side">
         <div class="stat3">
@@ -546,7 +560,7 @@ const I18N={
   afford_h3:"Affordability", cart_h3:"Holiday Cart", cart_empty:"Nothing shipped yet. Build a good and ship it.",
   cart_base:"Base cost", cart_sur:"Tariff surcharge", cart_paid:"You paid", legend_h3:"Legend",
   legend_body:"<b>•</b> raw material &nbsp; <b>••</b> part &nbsp; <b>•••</b> finished.<br>Build 1→2→3 to ship a finished good. Match <b>4 or 5</b> in a row for bonus production and a free move. The striped tile is a <b>tariff gate</b>: it can't be moved or matched and taxes everything you ship, raising holiday prices for families. Only a trade deal clears tariffs.",
-  costbar_label:"Tariffs added to holiday prices", hint:"💡 Hint",
+  costbar_label:"Tariffs added to holiday prices", hint:"💡 Hint", howmini_ship:"ship a product",
   compare_deal:"With a deal", compare_paid:"What you paid",
   finale_eyebrow:"Season complete", finale_h2:"You made it to New Year's",
   fstat_ship:"Goods shipped", fstat_paid:"You paid", fstat_tariff:"Tariff cost", finale_again:"Play the season again",
@@ -603,7 +617,7 @@ const I18N={
   afford_h3:"Abordabilité", cart_h3:"Panier des Fêtes", cart_empty:"Rien d'expédié. Bâtissez un bien et expédiez-le.",
   cart_base:"Coût de base", cart_sur:"Surtaxe tarifaire", cart_paid:"Vous avez payé", legend_h3:"Légende",
   legend_body:"<b>•</b> matière première &nbsp; <b>••</b> pièce &nbsp; <b>•••</b> fini.<br>Bâtissez 1→2→3 pour expédier un bien fini. Associez <b>4 ou 5</b> de suite pour une production bonus et un coup gratuit. La tuile rayée est une <b>barrière tarifaire</b> : impossible à déplacer ou à associer, elle taxe tout ce que vous expédiez et fait grimper les prix des Fêtes pour les familles. Seule une entente commerciale élimine les tarifs.",
-  costbar_label:"Tarifs ajoutés aux prix des Fêtes", hint:"💡 Indice",
+  costbar_label:"Tarifs ajoutés aux prix des Fêtes", hint:"💡 Indice", howmini_ship:"expédier un produit",
   compare_deal:"Avec une entente", compare_paid:"Ce que vous avez payé",
   finale_eyebrow:"Saison terminée", finale_h2:"Vous voilà rendu au Nouvel An",
   fstat_ship:"Biens expédiés", fstat_paid:"Vous avez payé", fstat_tariff:"Coût des tarifs", finale_again:"Rejouer la saison",

@@ -189,8 +189,16 @@ button{font-family:var(--disp);cursor:pointer}
 @keyframes ship{40%{transform:scale(1.18)}to{transform:scale(0) translateY(-30px);opacity:0}}
 @keyframes shake{25%{transform:translateX(-4px)}50%{transform:translateX(4px)}75%{transform:translateX(-3px)}}
 @keyframes hintpulse{0%,100%{box-shadow:inset 0 -3px 0 rgba(0,0,0,.14)}50%{box-shadow:0 0 0 4px var(--gold)}}
-.flyship{position:fixed;transform:translate(-50%,-50%);font-size:2.2rem;z-index:45;pointer-events:none;
-  filter:drop-shadow(0 4px 8px rgba(0,0,0,.3));transition:transform .6s cubic-bezier(.2,.7,.3,1), opacity .6s ease}
+.flyship{position:fixed;transform:translate(-50%,-50%);z-index:45;pointer-events:none;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.3));transition:transform .7s cubic-bezier(.2,.7,.3,1), opacity .7s ease}
+.flyship .fs-g{font-size:2.3rem;line-height:1}
+.flyship .fs-cost{font-family:var(--disp);font-weight:800;font-size:1rem;color:#fff;background:var(--bad);
+  border-radius:8px;padding:1px 8px;box-shadow:0 2px 6px rgba(0,0,0,.35);white-space:nowrap}
+.tile[data-kind=gate].taxing .face{animation:taxflash .65s ease}
+@keyframes taxflash{0%{box-shadow:0 0 0 0 rgba(198,55,47,0)}40%{box-shadow:0 0 0 4px rgba(198,55,47,.95)}100%{box-shadow:0 0 0 0 rgba(198,55,47,0)}}
+.costbar.bump{animation:cbbump .45s ease}
+@keyframes cbbump{30%{transform:scale(1.03)}}
 
 /* ---------- side widgets ---------- */
 .stat3{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
@@ -809,14 +817,20 @@ function makeEl(t){
   return el;
 }
 function cellPx(){ return parseFloat(getComputedStyle(board).getPropertyValue('--cell')); }
-function flyShip(r,c,glyph){
+function flyShip(r,c,glyph,sur){
   try{ const cell=cellPx(); const rect=board.getBoundingClientRect();
-    const el=document.createElement('div'); el.className='flyship'; el.textContent=glyph;
+    const el=document.createElement('div'); el.className='flyship';
+    el.innerHTML='<div class="fs-g">'+glyph+'</div>'+(sur>0?('<div class="fs-cost">+'+money(sur)+'</div>'):'');
     el.style.left=(rect.left+c*cell+cell/2)+'px'; el.style.top=(rect.top+r*cell+cell/2)+'px';
     document.body.appendChild(el);
-    requestAnimationFrame(()=>{ el.style.transform='translate(-50%,-50%) translateY(-74px) scale(1.7)'; el.style.opacity='0'; });
-    setTimeout(()=>el.remove(),680);
+    requestAnimationFrame(()=>{ el.style.transform='translate(-50%,-50%) translateY(-80px) scale(1.2)'; el.style.opacity='0'; });
+    setTimeout(()=>el.remove(),760);
   }catch(e){} }
+function pulseGates(){
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){ const t=S.grid[r][c];
+    if(t&&t.kind==='gate'){ const el=els.get(t.id); if(el){ el.classList.add('taxing'); setTimeout(()=>el.classList.remove('taxing'),700); } } }
+  const cb=document.getElementById('costbar'); if(cb){ cb.classList.remove('bump'); void cb.offsetWidth; cb.classList.add('bump'); }
+}
 
 function render(){
   const cell=cellPx();
@@ -943,7 +957,9 @@ function countGates(){ let n=0; for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){c
 
 function shipProduct(fam, combo, anchor){
   const f=FAM[fam]; const gated=countGates()>0; sfx('ship');
-  if(anchor) flyShip(anchor[0], anchor[1], f.glyph[2]);
+  const surchargePreview = (f.exempt||!gated) ? 0 : Math.round(f.price*f.tariff);
+  if(anchor) flyShip(anchor[0], anchor[1], f.glyph[2], surchargePreview);
+  if(surchargePreview>0) pulseGates();
   const surcharge = (f.exempt||!gated) ? 0 : Math.round(f.price*f.tariff);
   S.cart.push({family:fam, base:f.price, sur:surcharge, exempt:f.exempt});
   S.base+=f.price; S.extra+=surcharge; S.shipped++;

@@ -374,7 +374,7 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
         <span class="arrow">➜</span>
         <div class="tile static" data-kind="good" data-family="dinner" data-tier="2"><div class="face"><span>🦃</span><span class="dots"><i></i><i></i></span></div></div>
         <span class="arrow">➜</span>
-        <div class="tile static" data-kind="good" data-family="dinner" data-tier="3"><div class="face"><span>🍽️</span><span class="dots"><i></i><i></i><i></i></span></div></div>
+        <div class="tile static" data-kind="good" data-family="dinner" data-tier="3"><div class="face"><span>🍗</span><span class="dots"><i></i><i></i><i></i></span></div></div>
         <span class="arrow" style="font-size:1.5rem">🚚</span>
       </div>
       <div class="btnrow">
@@ -533,11 +533,11 @@ const I18N={
  en:{
   sub:"A US-Canada holiday trade game", cabc:"Canadian American Business Council",
   hero_h2:"Stock the season.<br>Beat the tariffs.",
-  hero_lede:"The US and Canada build the holidays together. Match raw materials into finished holiday goods, ship them to your cart, and sign a trade deal to clear the tariffs that raise holiday prices.",
+  hero_lede:"When it comes to the holidays, the US and Canada build together, from the materials in a toy to the parts behind a string of lights. Follow those supply chains to fill your Holiday Cart with finished products. The catch: tariffs add to the price of everything you ship, so shop while working toward a US-Canada trade deal that removes those extra costs.",
   chlabel:"From raw material to finished gift",
-  how1_t:"Match to build", how1_p:"Match 3 of the same tile. Raw materials become parts, parts become a finished gift. That path is the real supply chain.",
-  how2_t:"Ship for points", how2_p:"Finish a good and it ships to your Holiday Cart with a price tag. Fill the shopping list before you run out of moves.",
-  how3_t:"Clear the tariffs", how3_p:"Striped tariff gates can't be matched or moved, and they tax everything you ship, which means higher prices for families over the holidays. The only way to clear them is to reach a US-Canada trade deal.",
+  how1_t:"Match by color and dots", how1_p:"Same-color tiles are one product's supply chain. 1 dot is a raw material, 2 dots a part. Match three 1-dot tiles to make a part, then match three 2-dot tiles of that color to ship the finished product. The two matches don't have to be back-to-back.",
+  how2_t:"Fill your Holiday Cart", how2_p:"Ship the level's finished products before you run out of moves. Longer matches of 4 or 5 give bonus production and a free move.",
+  how3_t:"Tariffs and the trade deal", how3_p:"Striped tariff tiles can't be matched or moved, and they add a charge to everything you ship, which raises holiday prices for families. Earn support by shipping and big matches, then sign a US-Canada trade deal to clear the tariffs.",
   play:"Start the season", howto:"How to play",
   fineprint:"Fact-based. The goods, routes and price effects are drawn from sources like the USDA, EIA, USTR, Statistics Canada, the Yale Budget Lab and the Tax Foundation. In-game prices are illustrative; the real figures appear on your end-of-level receipt.",
   fp_dinner:"🦃 Dinner", fp_maple:"🍪 Maple", fp_tree:"🎄 Tree", fp_car:"🚗 Car", fp_lights:"💡 Lights", fp_toys:"🧸 Toys", fp_party:"🎉 Party", fp_menorah:"🕎 Menorah",
@@ -553,7 +553,7 @@ const I18N={
   bycabc:"By the CABC", sources_btn:"Sources", r_sources:"View sources",
   tt_home:"Start over", tt_sound:"Sound on / off", tt_help:"How to play", tt_theme:"Switch light / dark", tt_lang:"Français", lang_btn:"FR",
   deal_build:"Build support for a deal", deal_sign:"🤝 Sign the US-Canada deal", deal_signed:"🤝 Deal signed",
-  deal_note_idle:"Ship goods and make big matches to bring politicians in the U.S. and Canada on board with a trade deal.",
+  deal_note_idle:"Earn support by shipping products and making big matches. Bring the President, Prime Minister, Congress and Parliament on board, then sign the deal to clear every tariff.",
   deal_note_ship_a:"Ship ", deal_note_ship_b:" more of your own goods to win the last vote and unlock the deal.",
   deal_note_ready:"Everyone is on board. Sign the deal to roll back every tariff.",
   deal_note_signed:"Deal signed. Tariffs stay down for the rest of the level.",
@@ -590,11 +590,11 @@ const I18N={
  fr:{
   sub:"Un jeu des Fêtes sur le commerce Canada–É.-U.", cabc:"Conseil des affaires canado-américain",
   hero_h2:"Garnissez la saison.<br>Déjouez les tarifs.",
-  hero_lede:"Le Canada et les États-Unis bâtissent les Fêtes ensemble. Associez les matières premières pour en faire des biens des Fêtes, expédiez-les vers votre panier, puis concluez une entente commerciale pour éliminer les tarifs qui font grimper les prix des Fêtes.",
+  hero_lede:"Pour les Fêtes, le Canada et les États-Unis bâtissent ensemble, des matières d'un jouet aux pièces derrière une guirlande de lumières. Suivez ces chaînes d'approvisionnement pour remplir votre Panier des Fêtes de produits finis. Le hic : les tarifs s'ajoutent au prix de tout ce que vous expédiez, alors magasinez tout en travaillant à une entente commerciale Canada–É.-U. qui élimine ces coûts supplémentaires.",
   chlabel:"De la matière première au cadeau fini",
-  how1_t:"Associez pour bâtir", how1_p:"Associez 3 tuiles identiques. Les matières premières deviennent des pièces, les pièces un cadeau fini. Ce parcours, c'est la vraie chaîne d'approvisionnement.",
-  how2_t:"Expédiez pour des points", how2_p:"Finissez un bien et il s'expédie vers votre Panier des Fêtes avec un prix. Remplissez la liste avant de manquer de coups.",
-  how3_t:"Éliminez les tarifs", how3_p:"Les barrières tarifaires rayées ne peuvent être ni associées ni déplacées, et elles taxent tout ce que vous expédiez, ce qui fait grimper les prix des Fêtes pour les familles. Le seul moyen de les éliminer : conclure une entente commerciale Canada–É.-U.",
+  how1_t:"Associez par couleur et points", how1_p:"Les tuiles de même couleur forment la chaîne d'un produit. 1 point = matière première, 2 points = pièce. Associez trois tuiles à 1 point pour créer une pièce, puis trois tuiles à 2 points de cette couleur pour expédier le produit fini. Les deux agencements n'ont pas à se suivre.",
+  how2_t:"Remplissez votre Panier des Fêtes", how2_p:"Expédiez les produits finis du niveau avant de manquer de coups. Les agencements de 4 ou 5 donnent une production bonus et un coup gratuit.",
+  how3_t:"Les tarifs et l'entente", how3_p:"Les tuiles tarifaires rayées ne peuvent être ni associées ni déplacées, et elles ajoutent des frais à tout ce que vous expédiez, ce qui fait grimper les prix des Fêtes pour les familles. Gagnez des appuis en expédiant et avec de gros agencements, puis signez une entente Canada–É.-U. pour éliminer les tarifs.",
   play:"Commencer la saison", howto:"Comment jouer",
   fineprint:"Fondé sur des faits. Les biens, les routes et les effets sur les prix proviennent de sources comme l'USDA, l'EIA, l'USTR, Statistique Canada, le Yale Budget Lab et la Tax Foundation. Les prix du jeu sont illustratifs; les chiffres réels apparaissent sur votre reçu de fin de niveau.",
   fp_dinner:"🦃 Souper", fp_maple:"🍪 Érable", fp_tree:"🎄 Sapin", fp_car:"🚗 Auto", fp_lights:"💡 Lumières", fp_toys:"🧸 Jouets", fp_party:"🎉 Fête", fp_menorah:"🕎 Ménorah",
@@ -610,7 +610,7 @@ const I18N={
   bycabc:"Par le CABC", sources_btn:"Sources", r_sources:"Voir les sources",
   tt_home:"Recommencer", tt_sound:"Son activé / désactivé", tt_help:"Comment jouer", tt_theme:"Thème clair / foncé", tt_lang:"English", lang_btn:"EN",
   deal_build:"Obtenez des appuis", deal_sign:"🤝 Signer l'entente", deal_signed:"🤝 Entente signée",
-  deal_note_idle:"Expédiez des biens et faites de gros agencements pour rallier les politiciens du Canada et des États-Unis à une entente commerciale.",
+  deal_note_idle:"Gagnez des appuis en expédiant des produits et avec de gros agencements. Ralliez le président, la première ministre, le Congrès et le Parlement, puis signez l'entente pour éliminer tous les tarifs.",
   deal_note_ship_a:"Expédiez ", deal_note_ship_b:" bien(s) de plus pour obtenir le dernier appui et débloquer l'entente.",
   deal_note_ready:"Tout le monde est d'accord. Signez l'entente pour annuler tous les tarifs.",
   deal_note_signed:"Entente signée. Les tarifs restent à zéro pour le reste du niveau.",
@@ -665,7 +665,7 @@ function applyLang(){
 }
 
 const FAM = {
-  dinner:{name:"Holiday Dinner", glyph:["🌾","🦃","🍽️"], tname:["Grain","Turkey","Dinner"],
+  dinner:{name:"Holiday Dinner", glyph:["🌾","🦃","🍗"], tname:["Grain","Turkey","Dinner"],
     price:85, tariff:0.08, exempt:false,
     fact:"Canada supplies about 86% of US frozen fries and is the #2 US farm market.", src:"USDA",
     fr:{name:"Souper des Fêtes", tname:["Grain","Dinde","Souper"], fact:"Le Canada fournit environ 86 % des frites surgelées des É.-U. et est le 2e marché agricole américain."}},
@@ -884,7 +884,7 @@ async function resolveAll(){
     const cleared=new Set(); const key=(r,c)=>r*COLS+c;
     for(const run of runs) for(const [r,c] of run.cells) cleared.add(key(r,c));
     cleared.forEach(k=>{ const r=(k/COLS)|0,c=k%COLS; const el=elAt(r,c); if(el)el.classList.add('clearing'); });
-    await wait(210);
+    await wait(250);
     cleared.forEach(k=>{ const r=(k/COLS)|0,c=k%COLS; const t=S.grid[r][c]; if(t){const el=els.get(t.id); if(el){el.remove();els.delete(t.id);}} });
     S.score += cleared.size*5*combo;
     gainSupport(cleared.size);
@@ -906,7 +906,7 @@ async function resolveAll(){
     updateHUD(); renderCart();
     gravity(); refill();
     render();
-    await wait(270);
+    await wait(combo>1?420:300);
   }
 }
 function choosePivot(run, used){ const key=(r,c)=>r*COLS+c;
@@ -1154,17 +1154,17 @@ const TUT=[
   note_fr:"Le commerce avec le Canada soutient des millions d'emplois américains, et les É.-U. vendent plus au Canada qu'à tout autre pays."},
  {ct:'Step 1', title:'Swap and match 3',
   vis:()=> tileHTML('maple',1)+tileHTML('maple',1)+tileHTML('maple',1)+arrow()+tileHTML('maple',2),
-  text:"Tap a tile, then a neighbour, to swap them (or drag). Line up three of the same tile. They don't just vanish, they combine into the next stage up the supply chain.",
+  text:"Tap a tile, then a neighbour, to swap them (or drag). Match three tiles of the same color and the same dots. Three 1-dot tiles merge into one 2-dot part.",
   note:"Real supply chains work this way: raw materials become parts, then finished products, often crossing the US-Canada border at each step.",
   ct_fr:"Étape 1", title_fr:"Échangez et associez 3",
-  text_fr:"Touchez une tuile, puis une voisine, pour les échanger (ou glissez). Alignez trois tuiles identiques. Elles ne disparaissent pas : elles se combinent en montant d'un cran dans la chaîne.",
+  text_fr:"Touchez une tuile, puis une voisine, pour les échanger (ou glissez). Associez trois tuiles de même couleur et de mêmes points. Trois tuiles à 1 point fusionnent en une pièce à 2 points.",
   note_fr:"Les vraies chaînes fonctionnent ainsi : les matières premières deviennent des pièces, puis des produits finis, traversant souvent la frontière Canada–É.-U. à chaque étape."},
  {ct:'Step 2', title:'Build it, then ship it',
   vis:()=> tileHTML('tree',1)+arrow()+tileHTML('tree',2)+arrow()+tileHTML('tree',3),
-  text:"Watch the dots: raw material (1) becomes a part (2) becomes a finished good (3). The instant a good is finished, it ships to your Holiday Cart and scores big.",
+  text:"To ship a finished product, match three 2-dot parts of the same color. Each part came from its own 1-dot match, so it takes a few matches, and they don't have to be back-to-back. Cascades often finish some for you.",
   note:"The US and Canada are each other's biggest customers, trading more than $2 billion in goods and services every day.",
   ct_fr:"Étape 2", title_fr:"Bâtissez, puis expédiez",
-  text_fr:"Regardez les points : la matière première (1) devient une pièce (2) puis un bien fini (3). Dès qu'un bien est fini, il s'expédie vers votre Panier des Fêtes.",
+  text_fr:"Pour expédier un produit fini, associez trois pièces à 2 points de même couleur. Chaque pièce vient de son propre agencement à 1 point : il en faut donc quelques-uns, et ils n'ont pas à se suivre. Les cascades en complètent souvent pour vous.",
   note_fr:"Le Canada et les États-Unis sont l'un pour l'autre leur plus gros client, échangeant plus de 2 milliards de dollars de biens et services chaque jour."},
  {ct:'Why it matters', title:'Every good crosses the border',
   vis:()=> '<span class="flagline">🇨🇦 ➜ 🚗 ➜ 🇺🇸</span>',
@@ -1182,10 +1182,10 @@ const TUT=[
   note_fr:"Un tarif est une taxe perçue à la frontière. Il s'ajoute au prix des biens, alors les familles paient plus cher leurs Fêtes."},
  {ct:'Your edge', title:'Reach a Trade Deal',
   vis:()=> '<span class="flagline">🇺🇸 🇨🇦 🏛️ 🤝</span>',
-  text:"Shipping goods and making big matches wins support from both leaders, Congress and Parliament. When all four are on board, sign the deal to clear every tariff at once, the only way tariffs come down.",
+  text:"Each product you ship and each big match wins over one side: the US President, the Canadian Prime Minister, Congress and Parliament. When all four are on board, the Sign button lights up, click it to clear every tariff at once.",
   note:"In reality, bringing tariffs down takes an agreement that leaders and lawmakers in both countries support.",
   ct_fr:"Votre atout", title_fr:"Concluez une entente",
-  text_fr:"Expédier des biens et réussir de gros agencements rallie les dirigeants, le Congrès et le Parlement. Quand les quatre sont d'accord, signez l'entente pour éliminer tous les tarifs d'un coup, le seul moyen de les faire baisser.",
+  text_fr:"Chaque produit expédié et chaque gros agencement rallie un camp : le président américain, la première ministre canadienne, le Congrès et le Parlement. Quand les quatre sont d'accord, le bouton Signer s'allume : cliquez pour éliminer tous les tarifs d'un coup.",
   note_fr:"En réalité, faire baisser les tarifs exige une entente appuyée par les dirigeants et les législateurs des deux pays."},
 ];
 let tutIdx=0, tutThenStart=false;

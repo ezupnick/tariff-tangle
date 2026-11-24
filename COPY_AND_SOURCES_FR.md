@@ -32,7 +32,7 @@ Pour expédier un produit fini, associez trois pièces à 2 points de même coul
 _Dans le vrai commerce :_ Le Canada et les États-Unis sont l'un pour l'autre leur plus gros client, échangeant plus de 2 milliards de dollars de biens et services chaque jour.
 
 **Écran 4 — Pourquoi ça compte: Chaque bien traverse la frontière**  
-Les biens que vous bâtissez sont fabriqués par les deux pays ensemble. Une pièce d'auto peut traverser la frontière Canada–É.-U. quatre fois avant l'assemblage. C'est la vraie chaîne que vous jouez.  
+Les biens que vous bâtissez sont fabriqués par les deux pays ensemble. Une pièce d'auto peut traverser la frontière Canada–É.-U. jusqu'à huit fois avant l'assemblage. C'est la vraie chaîne que vous jouez.  
 _Dans le vrai commerce :_ Environ la moitié du contenu d'une auto construite au Canada provient en fait des États-Unis.
 
 **Écran 5 — Attention: Les tarifs taxent tout ce que vous expédiez**  
@@ -120,7 +120,7 @@ _Chaque produit se bâtit d’une matière première à une pièce puis à un bi
 - **Souper des Fêtes.** Le Canada fournit environ 86 % des frites surgelées des É.-U. et est le 2e marché agricole américain. (USDA)
 - **Érable et pâtisserie.** Le Canada produit environ 73 % du sirop d'érable mondial, presque tout au Québec. (Agriculture and Agri-Food Canada)
 - **Sapin et décorations.** Le Canada fournit aux É.-U. la plupart de leurs sapins de Noël frais, et le bois d'œuvre résineux porte un droit d'environ 35 %. (Statistics Canada; US Commerce)
-- **Auto sous le sapin.** Une pièce d'auto peut traverser la frontière Canada–É.-U. 4 fois avant l'assemblage; une auto construite aux É.-U. contient environ 50 % de contenu américain. (NBC News; USTR)
+- **Auto sous le sapin.** Une pièce d'auto peut traverser la frontière Canada–É.-U. jusqu'à 8 fois avant l'assemblage; une auto construite aux É.-U. contient environ 50 % de contenu américain. (CVMA; USTR)
 - **Lumières des Fêtes.** Le Canada fournit environ 60 % des importations de pétrole des É.-U. et alimente le réseau du Nord-Est, sans tarif sur l'énergie aujourd'hui. (EIA)
 - **Jouets et jeux.** La plupart des jouets sont fabriqués à l'étranger, alors les tarifs sur les jouets et leurs pièces font grimper les prix payés par les familles pendant les Fêtes. (Peterson Institute)
 - **Fête du Nouvel An.** Le Canada est le premier fournisseur de papier et d'emballage des É.-U., la matière derrière les chapeaux de fête, les serpentins, le papier cadeau et les boîtes. (US Census; UN Comtrade)
@@ -149,7 +149,7 @@ _Chaque affirmation factuelle du jeu et sa source. Les prix en dollars sont illu
 | Le Canada fournit environ 86 % des frites surgelées des É.-U. et est le 2e marché agricole américain. | USDA |
 | Le Canada produit environ 73 % du sirop d'érable mondial, presque tout au Québec. | Agriculture and Agri-Food Canada |
 | Le Canada fournit aux É.-U. la plupart de leurs sapins de Noël frais, et le bois d'œuvre résineux porte un droit d'environ 35 %. | Statistics Canada; US Commerce |
-| Une pièce d'auto peut traverser la frontière Canada–É.-U. 4 fois avant l'assemblage; une auto construite aux É.-U. contient environ 50 % de contenu américain. | NBC News; USTR |
+| Une pièce d'auto peut traverser la frontière Canada–É.-U. jusqu'à 8 fois avant l'assemblage; une auto construite aux É.-U. contient environ 50 % de contenu américain. | CVMA; USTR |
 | Le Canada fournit environ 60 % des importations de pétrole des É.-U. et alimente le réseau du Nord-Est, sans tarif sur l'énergie aujourd'hui. | EIA |
 | La plupart des jouets sont fabriqués à l'étranger, alors les tarifs sur les jouets et leurs pièces font grimper les prix payés par les familles pendant les Fêtes. | Peterson Institute |
 | Le Canada est le premier fournisseur de papier et d'emballage des É.-U., la matière derrière les chapeaux de fête, les serpentins, le papier cadeau et les boîtes. | US Census; UN Comtrade |

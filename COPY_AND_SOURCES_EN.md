@@ -32,7 +32,7 @@ To ship a finished product, match three 2-dot parts of the same color. Each part
 _In real trade:_ The US and Canada are each other's biggest customers, trading more than $2 billion in goods and services every day.
 
 **Screen 4 — Why it matters: Every good crosses the border**  
-The goods you build are made by both countries together. One car part can cross the US-Canada border four times before assembly. That is the real supply chain you're playing.  
+The goods you build are made by both countries together. One car part can cross the US-Canada border up to eight times before assembly. That is the real supply chain you're playing.  
 _In real trade:_ About half the content of a car built in Canada actually comes from the United States.
 
 **Screen 5 — Watch out: Tariffs tax everything you ship**  
@@ -120,7 +120,7 @@ _Each product builds from a raw material to a part to a finished good. These sta
 - **Holiday Dinner.** Canada supplies about 86% of US frozen fries and is the #2 US farm market. (USDA)
 - **Maple & Baking.** Canada makes about 73% of the world's maple syrup, nearly all of it from Quebec. (Agriculture and Agri-Food Canada)
 - **Tree & Trimmings.** Canada sends the US most of its fresh Christmas trees, and softwood lumber carries roughly a 35% duty. (Statistics Canada; US Commerce)
-- **Car Under the Tree.** One auto part can cross the US-Canada border 4 times before assembly; a US-built car is about 50% US content. (NBC News; USTR)
+- **Car Under the Tree.** One auto part can cross the US-Canada border up to 8 times before assembly; a US-built car is about 50% US content. (CVMA; USTR)
 - **Holiday Lights.** Canada supplies about 60% of US oil imports and powers the Northeast grid, with no tariff on energy today. (EIA)
 - **Toys & Games.** Most toys are made overseas, so tariffs on toys and their parts push up the prices families pay over the holidays. (Peterson Institute)
 - **New Year's Party.** Canada is the top supplier of paper and packaging to the US, the material behind party hats, streamers, wrapping and boxes. (US Census; UN Comtrade)
@@ -149,7 +149,7 @@ _Every factual claim in the game and its source. Dollar figures for prices are i
 | Canada supplies about 86% of US frozen fries and is the #2 US farm market. | USDA |
 | Canada makes about 73% of the world's maple syrup, nearly all of it from Quebec. | Agriculture and Agri-Food Canada |
 | Canada sends the US most of its fresh Christmas trees, and softwood lumber carries roughly a 35% duty. | Statistics Canada; US Commerce |
-| One auto part can cross the US-Canada border 4 times before assembly; a US-built car is about 50% US content. | NBC News; USTR |
+| One auto part can cross the US-Canada border up to 8 times before assembly; a US-built car is about 50% US content. | CVMA; USTR |
 | Canada supplies about 60% of US oil imports and powers the Northeast grid, with no tariff on energy today. | EIA |
 | Most toys are made overseas, so tariffs on toys and their parts push up the prices families pay over the holidays. | Peterson Institute |
 | Canada is the top supplier of paper and packaging to the US, the material behind party hats, streamers, wrapping and boxes. | US Census; UN Comtrade |

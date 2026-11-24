@@ -9,7 +9,9 @@
 <meta property="og:description" content="A US-Canada holiday trade game. Build cross-border holiday goods and strike a trade deal to keep prices down for families.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<!-- Before launch: set og:url and og:image (and SHARE_URL in the script) to your live hosted URLs. -->
+<meta name="twitter:site" content="@cabc_co">
+<meta property="og:url" content="https://tarifftangle.co/">
+<!-- Before launch: set og:image to your live hosted preview image. -->
 <style>
 /* Layout: a one-screen holiday match-3. Festive evergreen ground, warm gold + holiday-red accents,
    family-colored tiles. Playful rounded display face over a clean humanist body. */
@@ -542,9 +544,10 @@ details.src ul{margin:8px 0 0;padding-left:18px;font-size:.73rem;color:var(--mut
 (function(){
 "use strict";
 const COLS=7, ROWS=7;
-const SHARE_URL = ""; // TODO: set to the live game URL before launch (used in share links)
+const SHARE_URL = "https://tarifftangle.co"; // live game URL (used in share links)
 const PROMO_URL = SHARE_URL || "https://cabc.co";
 const SHARE_TAG = "TariffTangle";
+const SHARE_HANDLE = "cabc_co"; // CABC handle on X (used as via= in the tweet intent)
 const DEAL_STEP = 16; // momentum points needed to win over each of the 4 parties
 const META = {levels:{}}; // per-level results for a playthrough, keyed by level index
 
@@ -1080,7 +1083,7 @@ function copyText(t, btn){
 function renderShare(host, res){
   if(!host)return;
   const txt=buildShareText(res); const enc=encodeURIComponent(txt); const u=encodeURIComponent(PROMO_URL);
-  const x='https://twitter.com/intent/tweet?text='+enc+'&url='+u+'&hashtags='+SHARE_TAG;
+  const x='https://twitter.com/intent/tweet?text='+enc+'&url='+u+'&hashtags='+SHARE_TAG+'&via='+SHARE_HANDLE;
   const li='https://www.linkedin.com/sharing/share-offsite/?url='+u;
   host.innerHTML=
     '<div class="sharecard"><div class="sc-head"><span class="sc-brand">🎁 Tariff Tangle</span>'+

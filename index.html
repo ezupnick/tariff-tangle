@@ -110,6 +110,20 @@ button{font-family:var(--disp);cursor:pointer}
 .famrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .famrow .fp{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);
   border-radius:999px;padding:5px 11px;font-size:.78rem;font-weight:700;color:#d7e8e0}
+@media (min-width:760px){
+  .herobanner{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);
+    grid-template-areas:"eye chain" "head chain" "lede chain" "btn chain" "fam chain";
+    column-gap:30px;row-gap:15px;align-items:start;padding:40px 34px 32px}
+  .herobanner>.eyebrow{grid-area:eye;align-self:end}
+  .herobanner>h2{grid-area:head}
+  .herobanner>.lede{grid-area:lede}
+  .herobanner>.btnrow{grid-area:btn}
+  .herobanner>.famrow{grid-area:fam}
+  .herobanner>.herochain{grid-area:chain;align-self:center;justify-self:stretch;--cell:62px;
+    flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px 20px 26px}
+  .herobanner>.herochain .chlabel{text-align:center}
+  .herobanner>.herochain .arrow{transform:rotate(90deg)}
+}
 .how{margin-top:14px}
 .how .step{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:15px 15px 16px;box-shadow:var(--shadow)}
 .how .step .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:1.2rem;margin-bottom:10px}
